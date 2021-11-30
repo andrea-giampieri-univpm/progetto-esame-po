@@ -1,12 +1,22 @@
 # (inserire nome)
 
-Repository ufficiale per condivisione sorgente del progetto assegnato per esame di programmazione ad oggetti
+**Repository ufficiale per condivisione sorgente del progetto assegnato per esame di programmazione ad oggetti**
 
 # Progetto
 
 ## Overview
 
-## Folder structure
+### Folder structure
+> Per non perdersi nei meandri del codice
+
+    .
+    ├── ...
+    ├── test                    # Test files (alternatively `spec` or `tests`)
+    │   ├── benchmarks          # Load and stress tests
+    │   ├── integration         # End-to-end, integration tests (alternatively `e2e`)
+    │   └── unit                # Unit tests
+    └── ...
+
 
 # Specifiche
 
