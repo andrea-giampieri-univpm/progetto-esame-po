@@ -4,7 +4,9 @@ Repository ufficiale per condivisione sorgente del progetto assegnato per esame 
 
 # Progetto
 
-In questa sezione vengono illustrati i diagrammi UML riferiti a varie parti del progetto
+## Overview
+
+## Folder structure
 
 # Specifiche
 
@@ -15,7 +17,6 @@ In questa sezione vengono illustrati i diagrammi UML riferiti a varie parti del 
 ## Index
 
 | Tipo | Controller | Descrizione | Parametri IN | OUT |
-| ----- | ---- | ---------------------- |---- | ----|
 | GET | [ControllerName](https://github.com/andrea-giampieri-univpm/progetto-esame-po#ControllerName) | Restituisce oggetti  | none | json |
 
 # Test cases
