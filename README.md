@@ -1,9 +1,17 @@
 # PotrebbePiovere
 
+<img src="logo.png" alt="Logo" width="200" text-align="center"/>
+
+
 **Repository ufficiale per condivisione sorgente del progetto assegnato per esame di programmazione ad oggetti**
+ 
+Finizii Francesco - Giampieri Andrea
+
+&copy; 2021 
 
 # Progetto
->**SPECIFICA ORIGINALE**
+## Specifica orginiale
+
 >
 >MACRO TEMA: OPENWEATHER
 >
@@ -16,18 +24,30 @@
 ## Overview
 
 ### Folder structure
-> Per non perdersi nei meandri del codice
+Per non perdersi nei meandri del codice
 
     .
-    ├── ...
-    ├── test                    # Test files (alternatively `spec` or `tests`)
-    │   ├── benchmarks          # Load and stress tests
-    │   ├── integration         # End-to-end, integration tests (alternatively `e2e`)
-    │   └── unit                # Unit tests
-    └── ...
+    └── PotrebbePiovere             # Home progetto con configurazione Maven
+        ├── src                     
+        │   ├── main                
+        │   │   ├── resources       # Risorse e configurazioni springboot
+        │   │   └── java            # Source files
+        │   └── test                # Classi di tests
+        └── ...
 
+# Implementazione
 
-# Specifiche
+## API reference
+
+### Index
+
+| Tipo | Controller | Descrizione | Parametri IN | OUT |
+| :---: | :---: | :--: | :---: | :---: |
+| GET | [ControllerName](https://github.com/andrea-giampieri-univpm/progetto-esame-po#ControllerName) | Restituisce oggetti  | none | json |
+
+###  Controller specs
+
+#### Status
 
 ## Classi
 | Nome | Descrizione |
@@ -40,20 +60,12 @@
 | OwmCoord | Oggetto da json OWM per il modello dati coordinate  |
 | OwmClouds | Oggetto da json OWM per il modello dati nuvolosità  |
 
+### Test cases
+
+### Exception handling
+
 ## Class Diagrams
 
-# API reference
+# Interfaccia grafica
 
-## Index
-
-| Tipo | Controller | Descrizione | Parametri IN | OUT |
-| :---: | :---: | :--: | :---: | :---: |
-| GET | [ControllerName](https://github.com/andrea-giampieri-univpm/progetto-esame-po#ControllerName) | Restituisce oggetti  | none | json |
-
-# Test cases
-
-# Exception handling
-
-# GUI
-
-# Istruzioni
+# Istruzioni 
