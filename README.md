@@ -31,6 +31,7 @@
 
 ## Classi
 | Nome | Descrizione |
+| :---: | :---: |
 | OwmCurrentJson | Oggetto da json OWM che rappresenta l'oggetto di risposta ricevuto tramite le api "current" di OWM  |
 | OwmMain | Oggetto da json OWM per il modello dati principale   |
 | OwmSys | Oggetto da json OWM per il modello dati sistema  |
@@ -46,6 +47,7 @@
 ## Index
 
 | Tipo | Controller | Descrizione | Parametri IN | OUT |
+| :---: | :---: | :--: | :---: | :---: |
 | GET | [ControllerName](https://github.com/andrea-giampieri-univpm/progetto-esame-po#ControllerName) | Restituisce oggetti  | none | json |
 
 # Test cases
