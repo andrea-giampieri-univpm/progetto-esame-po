@@ -9,6 +9,11 @@ import org.junit.jupiter.api.Test;
 
 import com.pp.utils.Config;
 
+/**
+ * Test per la classe config
+ * @author Andrea Giampieri
+ *
+ */
 class ConfigTest {
 	
 	@BeforeAll
