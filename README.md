@@ -23,6 +23,14 @@ Finizii Francesco - Giampieri Andrea
     
 ## Overview
 
+L'implementazione realizzata consente di: 
+- visualizzare temperatura e pressione correnti di una specifica città
+- salvare ogni n ore i dati offerti dall'API Current di OpenWeatherMap su file
+- richiedere delle statistiche sui dati salvati eventualmente filtrati per data e ora
+- gestire la configurazione dell'applicazione
+
+Il progetto viene realizzato in Java 17 su framework Spring con Maven gestore dei pacchetti.
+
 ### Folder structure
 Per non perdersi nei meandri del codice
 
@@ -41,30 +49,53 @@ Per non perdersi nei meandri del codice
 
 ### Index
 
-| Tipo | Controller | Descrizione | Parametri IN | OUT |
+| Tipo | Controller | Descrizione | Parametri | Return |
 | :---: | :---: | :--: | :---: | :---: |
-| GET | [ControllerName](https://github.com/andrea-giampieri-univpm/progetto-esame-po#ControllerName) | Restituisce oggetti  | none | json |
+| GET | [/status](https://github.com/andrea-giampieri-univpm/progetto-esame-po#Status) | Restituisce la running-config come json |
+| GET | [/addmonitoring?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#AddMonitoring) | Aggiunge una città passata come parametro al monitoraggio |
+| GET | [/removemonitoring?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#RemoveMonitoring) | Rimuove una città dal monitoraggio  |
+| GET | [/getinstant?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstant) | Restituisce in json il meteo corrente di una città data come id  |
+| GET | [/getstats?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStats) | Restituisce in json le statistiche di una città data come id utilizzando tutti i campioni disponibili |
+| GET | [/getstatsfiltered?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFiltered) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno del periodo indicato|
+| POST | [/getstatsfiltered/](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFilteredArr) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno dei periodi indicati in un array passato come json|
 
 ###  Controller specs
 
 #### Status
 
+#### AddMonitoring
+
+#### RemoveMonitoring
+
+#### GetInstant
+
+#### GetStats
+
+#### GetStatsFiltered
+
+#### GetStatsFilteredArr
+
 ## Classi
-| Nome | Descrizione |
-| :---: | :---: |
-| OwmCurrentJson | Oggetto da json OWM che rappresenta l'oggetto di risposta ricevuto tramite le api "current" di OWM  |
-| OwmMain | Oggetto da json OWM per il modello dati principale   |
-| OwmSys | Oggetto da json OWM per il modello dati sistema  |
-| OwmWeather | Oggetto da json OWM per il modello dati clima   |
-| OwmWind | Oggetto da json OWM per il modello dati vento  |
-| OwmCoord | Oggetto da json OWM per il modello dati coordinate  |
-| OwmClouds | Oggetto da json OWM per il modello dati nuvolosità  |
+
+ConfigController: Mapping delle rotte per la gestione della configurazione 
+CurrentWeatherController: Mapping delle rotte per il meteo attuale 
+StatsController: Mapping delle rotte per le statistiche 
+DataPolling: Implementazione tramite Scheduler Spring del salvataggio dati temporizzato
+Config: Gestisce il modello della configurazione
+CurrentWeather: Sottoclasse di OwmCurrentJson che specializza la classe per questa applicazione
+OwmCurrentJson: Da json OWM, rappresenta l'oggetto di risposta ricevuto tramite le api "current" di OWM
+OwmMain: Da json OWM, per il modello dati principale
+OwmSys: Da json OWM, per il modello dati sistema
+OwmWeather: Da json OWM, per il modello dati clima
+OwmWind: Da json OWM, per il modello dati vento
+OwmCoord: Da json OWM, per il modello dati coordinate
+OwmClouds: Da json OWM, per il modello dati nuvolosità 
+
+### Interfaces
 
 ### Test cases
 
 ### Exception handling
-
-## Class Diagrams
 
 # Interfaccia grafica
 
