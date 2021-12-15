@@ -1,4 +1,4 @@
-package com.pp.controller;
+package com.pp.model;
 
 
 import java.text.MessageFormat;
