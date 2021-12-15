@@ -111,7 +111,14 @@ public class Config {
 		} catch (ClassCastException e) {
 			System.out.println("Errore formato dati da json");
 			return null;
-		}
-		
+		}	
+	}
+	
+	/**
+	 * Converte l'oggetto configurazione in una stringa json
+	 * @return String con la configurazione completa
+	 */
+	public static String toJsonString() {
+		return conf.toString();
 	}
 }

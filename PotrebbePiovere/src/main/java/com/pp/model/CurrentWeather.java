@@ -1,13 +1,19 @@
 package com.pp.model;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.TimeZone;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
+import com.pp.interfaces.InterfaceCurrentWeather;
 import com.pp.model.owm.OwmCurrentJson;
+import com.pp.utils.Config;
 
 /**
  * modello contenente i dati e i metodi
@@ -15,7 +21,7 @@ import com.pp.model.owm.OwmCurrentJson;
  * @author Andrea Giampieri
  *
  */
-public class CurrentWeather extends OwmCurrentJson {
+public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWeather {
 
 	/**
 	 * Costruttore vuoto
@@ -70,11 +76,47 @@ public class CurrentWeather extends OwmCurrentJson {
 		return super.getMain().getTemp();
 	}
 	
+	/**
+	 * Consente il salvataggio dell'oggetto come stringa json all'interno di un file
+	 * se il file è già esistente, viene aggiunto l'oggetto come riga
+	 * il file sarà nel datapath specificato in configurazione
+	 * il nome file sarà data_cityid.json
+	 */
+	public void appendToFile() {
+		try {
+			//salvo il file
+			FileWriter fw = new FileWriter(Config.getConf("data_path")+"data_"+this.getId()+".json",true);
+        	BufferedWriter bw = new BufferedWriter(fw);
+        	PrintWriter pw = new PrintWriter(bw);
+        	pw.println(this.toJsonString());
+        	pw.close();
+            bw.close();
+            fw.close();
+	        
+		} catch (Exception e) {
+        	System.out.println("Errore scrittura file");
+        }
+	}
 	
+	/**
+	 * implementazione dell'interfaccia
+	 * Ottengo i parametri essenziali del progetto in formato json
+	 * @return String con l'oggetto codificato in json 
+	 */
+	public String toJsonString() {
+		HashMap<String, Object> keyvalue= new HashMap<>(); //costruisco un hashmap chiave/valore
+		keyvalue.put("id", this.getId());
+		keyvalue.put("dt", this.getDt()); //uso la data in unix timestamp per evitare conversioni inutili
+		keyvalue.put("temp", super.getMain().getTemp());
+		keyvalue.put("pressure", super.getMain().getPressure());
+		JSONObject jsonobj = new JSONObject(keyvalue); //creo l'oggetto JSONObj a partire dall'hashmap
+		return jsonobj.toJSONString();
+	}
 	
 	/**
 	 * Override del metodo toString per loggare i dati in console
 	 * non utile per json
+	 * @override toString della classe Object
 	 */
 	@Override
 	public String toString() {

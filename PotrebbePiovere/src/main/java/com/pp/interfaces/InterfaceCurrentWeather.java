@@ -3,7 +3,6 @@ package com.pp.interfaces;
 /**
  * Interfacce per l'implementazione della classe
  * CurrentWeather specifica per il progetto
- * @author jump
  *
  */
 public interface InterfaceCurrentWeather {
