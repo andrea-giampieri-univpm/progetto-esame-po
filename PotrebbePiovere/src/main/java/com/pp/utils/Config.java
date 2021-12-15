@@ -101,7 +101,7 @@ public class Config {
 	
 	/**
 	 * metodo diretto per ottenere un array con la lista delle città di cui salvare i dati
-	 * da valutare eventuale sottoclasse
+	 * da valutare inserimento in eventuale sottoclasse
 	 * @return arraylist di long contenente gli id delle città, null se errore o vuoto 
 	 */
 	public static ArrayList<Long> getCities(){
