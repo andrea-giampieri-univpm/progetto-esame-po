@@ -4,11 +4,14 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.TimeZone;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
 import com.pp.model.owm.OwmCurrentJson;
 
 /**
  * modello contenente i dati e i metodi
- * sul meteo necessari per il progetto
+ * sul meteo specializzati per il progetto
  * @author Andrea Giampieri
  *
  */
@@ -18,6 +21,28 @@ public class CurrentWeather extends OwmCurrentJson {
 	 * Costruttore vuoto
 	 */
 	public CurrentWeather() {
+	}
+	
+	/**
+	 * Costruttore a partire da stringa json.
+	 * questo non è equivalente al requestmapper in quanto mappa 
+	 * solo i dati rilevanti per l'applicazione
+	 * ovvero  id, temperatura, pressione, data
+	 * da utilizzarsi per import/export da file
+	 * sarebbe dovuto essere un metodo separato, creato per mostrare override costruttore
+	 * @param jsonString stringa contenente l'oggetto in formato json
+	 */
+	public CurrentWeather(String jsonString) {
+		JSONParser jparser = new JSONParser();
+		try {
+			JSONObject json = (JSONObject) jparser.parse(jsonString);
+			this.setId((Long) json.get("id"));
+			this.getMain().setTemp((Double) json.get("temp"));
+			this.getMain().setPressure((Double) json.get("pressure"));
+			this.setDt((Long)json.get("dt"));
+		} catch (Exception e) {
+			System.out.println("Errore parsing stringa json");
+		}
 	}
 	
 	/**
@@ -44,6 +69,8 @@ public class CurrentWeather extends OwmCurrentJson {
 	public double getTemp() {
 		return super.getMain().getTemp();
 	}
+	
+	
 	
 	/**
 	 * Override del metodo toString per loggare i dati in console
