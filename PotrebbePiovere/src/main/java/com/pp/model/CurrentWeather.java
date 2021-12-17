@@ -107,23 +107,11 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 		HashMap<String, Object> keyvalue= new HashMap<>(); //costruisco un hashmap chiave/valore
 		keyvalue.put("id", this.getId());
 		keyvalue.put("dt", this.getDt()); //uso la data in unix timestamp per evitare conversioni inutili
-		keyvalue.put("temp", this.getTemp());
-		keyvalue.put("pressure", this.getPressure());
+		keyvalue.put("temp", super.getMain().getTemp());
+		keyvalue.put("pressure", super.getMain().getPressure());
 		JSONObject jsonobj = new JSONObject(keyvalue); //creo l'oggetto JSONObj a partire dall'hashmap
 		return jsonobj.toJSONString();
 	}
-	
-	/**
-	 * override del metodo
-	 * Ottengo i parametri passati come parametro in formato json
-	 * @param paramList lista di stringhe con i parametri da inserire nel json
-	 * @return String con l'oggetto codificato in json 
-	 */
-	/*public String toJsonString(ArrayList<String> paramList) {
-		HashMap<String, Object> keyvalue= new HashMap<>(); //costruisco un hashmap chiave/valore
-		JSONObject jsonobj = new JSONObject(keyvalue); //creo l'oggetto JSONObj a partire dall'hashmap
-		return jsonobj.toJSONString();
-	}*/
 	
 	/**
 	 * Override del metodo toString per loggare i dati in console
