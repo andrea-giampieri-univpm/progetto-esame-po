@@ -32,9 +32,9 @@ public class CurrentWeatherController {
 			}
 			
 		} catch (CurrentWeatherException e) {
-			jsonstring=e.JsonError;
+			jsonstring=e.toString();
 		} finally {
-			System.out.println("Dimostrazione del blocco finally");
+			System.out.println("fine chiamata a getInstant"); //a scopo dimostrativo per finally
 		}
 		return jsonstring;
 	}

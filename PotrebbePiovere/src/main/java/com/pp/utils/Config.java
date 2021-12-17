@@ -2,7 +2,6 @@ package com.pp.utils;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -10,7 +9,9 @@ import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+
+import com.pp.exceptions.ConfigUnavailableException;
+import com.pp.exceptions.WrongConfigException;
 
 /**
  * Classe per gestire la configurazione dell'applicazione.
@@ -27,24 +28,23 @@ public class Config {
 	 * Legge il file config.json nella root del progetto 
 	 * rende disponibili i vari parametri
 	 * se il file è assente/illegibile, termina l'applicazione (in quanto indispensabile)
+	 * @throws ConfigUnavailableException in caso di errore nei parametri di configurazione
 	 */
-	public static void initialize() {
+	public static void initialize() throws ConfigUnavailableException {
 		JSONParser jparser = new JSONParser();
 		try {
 			conf = (JSONObject) jparser.parse(new BufferedReader (new FileReader ("config.json" ))); //parsing diretto del flusso	
 			//check dei parametri indispensabili ed output diagnostico
-			if(conf.containsKey("owm_apikey"))System.out.println("Using API KEY: "+conf.get("owm_apikey")); else throw new ParseException(0);
-			if(conf.containsKey("h_period")) System.out.println("Using period H: "+conf.get("h_period")); else throw new ParseException(0);
-			if(conf.containsKey("data_path")) System.out.println("Using data path: "+conf.get("data_path")); else throw new ParseException(0);
-		} catch (FileNotFoundException e) {
-			//dimostrazione gestione separata degli errori (in questo caso poco utile)
-			System.out.println("ERRORE: file di configurazione non trovato, app termina esecuzione.");
-			System.out.println(e);
-			System.exit(1);
+			if(conf.containsKey("owm_apikey") && conf.containsKey("h_period") && conf.containsKey("data_path")) {
+				System.out.println("Using API KEY: "+conf.get("owm_apikey")); 
+				System.out.println("Using period H: "+conf.get("h_period"));
+				System.out.println("Using data path: "+conf.get("data_path"));
+			}else {
+				throw new WrongConfigException();
+			}
 		} catch (Exception e){
-			System.out.println("ERRORE NON SPECIFICATO: verifica il log, app termina esecuzione.");
 			System.out.println(e);
-			System.exit(1);
+			throw new ConfigUnavailableException(e);
 		}
 	}
 	
