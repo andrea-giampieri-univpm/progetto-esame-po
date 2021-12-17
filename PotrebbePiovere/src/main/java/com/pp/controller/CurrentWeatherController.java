@@ -9,6 +9,7 @@ import com.pp.model.CurrentWeather;
 
 /**
  * classe di prova che restituisce il meteo istantaneo
+ * in caso di errore restituisce json di errore
  * @author Andrea Giampieri
  */
 @RestController
@@ -23,7 +24,7 @@ public class CurrentWeatherController {
 		} catch (CurrentWeatherException e) {
 			jsonstring=e.toString();
 		} finally {
-			System.out.println("Dimostrazione del blocco finally");
+			System.out.println("ricevuta chiamata api getinstant (demo del blocco finally)");
 		}
 		return jsonstring;
 	}

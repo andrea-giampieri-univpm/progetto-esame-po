@@ -8,9 +8,7 @@ package com.pp.exceptions;
 public class CurrentWeatherException extends Exception {
 
 	static final long serialVersionUID=0; //implementazione consigliata (warning) da classe exception
-	
-	private String JsonError= "{error:exception}";
-	
+		
 	/**
 	 * eccezione personalizzata
 	 */
@@ -23,6 +21,13 @@ public class CurrentWeatherException extends Exception {
 	 */
 	public CurrentWeatherException(String string){
 		super("id non numerico o sbagliato:\n"+string);
+	}
+	
+	/**
+	 * override del tostring per ritornare un json
+	 */
+	public String toString() {
+		return "{errordesc:"+this.getMessage()+"}";
 	}
 	
 }

@@ -1,7 +1,6 @@
 package com.pp.interfaces;
 
 import com.pp.exceptions.CurrentWeatherException;
-import com.pp.model.CurrentWeather;
 
 /**
  * Interfacce per l'implementazione della classe
@@ -16,7 +15,7 @@ public interface InterfaceCurrentWeather {
 	public void appendToFile();
 		
 	/**
-	 * ritorna stringa json ottenuta con jsonsimple del modello semplificato specifico per l'applicazione
+	 * @return stringa json ottenuta con jsonsimple del modello semplificato specifico per l'applicazione
 	 */
 	public String toJsonString() throws CurrentWeatherException;
 
