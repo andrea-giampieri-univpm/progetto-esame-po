@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import com.pp.exceptions.CurrentWeatherException;
 import com.pp.model.CurrentWeather;
 import com.pp.utils.Config;
 
@@ -22,12 +23,15 @@ public class DataPolling {
 	@Scheduled(fixedRate = 10000) //inserire da config
 	@Async
 	public void getCurrentWeather() {
-		RestTemplate restTemplate = new RestTemplate(); //oggetto mapper
 		ArrayList<Long> cities = Config.getCities(); //lista delle citta da interrogare
 		for(Long city: cities) {
-			CurrentWeather cw = restTemplate.getForObject("https://api.openweathermap.org/data/2.5/weather?id="+city.longValue()+"&appid="+Config.getConf("owm_apikey")+"&units=metric&lang=it", CurrentWeather.class);
-			System.out.println(cw); //output per diagnostica
-			cw.appendToFile(); //salvo il file
+			try {
+				CurrentWeather cw = new CurrentWeather(city);
+				System.out.println(cw); //output per diagnostica
+				cw.appendToFile(); //salvo il file
+			} catch (CurrentWeatherException e) {
+				System.out.println(e);
+			}
 		}
 	}
 }
