@@ -2,6 +2,7 @@ package com.pp.model;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -10,7 +11,10 @@ import java.util.TimeZone;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
 
+import com.pp.exceptions.CurrentWeatherException;
 import com.pp.interfaces.InterfaceCurrentWeather;
 import com.pp.model.owm.OwmCurrentJson;
 import com.pp.utils.Config;
@@ -35,19 +39,42 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	 * solo i dati rilevanti per l'applicazione
 	 * ovvero  id, temperatura, pressione, data
 	 * da utilizzarsi per import/export da file
-	 * sarebbe dovuto essere un metodo separato, creato per mostrare override costruttore
-	 * @param jsonString stringa contenente l'oggetto in formato json
+	 * sarebbe dovuto essere un metodo separato, creato per inserire override costruttore
+	 * @param jsonString stringa contenente l'oggetto in formato json (data in unix timestamp)
 	 */
 	public CurrentWeather(String jsonString) {
 		JSONParser jparser = new JSONParser();
 		try {
 			JSONObject json = (JSONObject) jparser.parse(jsonString);
-			this.setId((Long) json.get("id"));
+			Object id=json.get("id");
+			if ((id instanceof Long) && (Long)id!=0) 
+				this.setId((Long) id);
+			else
+				throw new CurrentWeatherException(String.valueOf(json));
 			this.getMain().setTemp((Double) json.get("temp"));
 			this.getMain().setPressure((Double) json.get("pressure"));
 			this.setDt((Long)json.get("dt"));
+		} catch (CurrentWeatherException e) {
+			System.out.println("Errore valori oggetto");
 		} catch (Exception e) {
 			System.out.println("Errore parsing stringa json");
+		}
+	}
+	
+	/**
+	 * costruisce l'oggetto dalle api. da aggiungere come parametro l'oggetto link
+	 * @param link link da chiamare per costruire l'oggetto
+	 */
+	public CurrentWeather(Long cityId) throws CurrentWeatherException {
+		RestTemplate restTemplate = new RestTemplate(); //oggetto mapper di spring
+		try {
+		CurrentWeather cw = restTemplate.getForObject("https://api.openweathermap.org/data/2.5/weather?id="+cityId+"&appid="+Config.getConf("owm_apikey")+"&units=metric&lang=it", CurrentWeather.class);
+		this.setId(cw.getId());
+		this.setDt(cw.getDt());
+		this.setMain(cw.getMain());
+		} catch (RestClientException e) {
+			System.out.println("errore comunicazione di rete");
+			throw new CurrentWeatherException();
 		}
 	}
 	
@@ -89,13 +116,12 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
         	BufferedWriter bw = new BufferedWriter(fw);
         	PrintWriter pw = new PrintWriter(bw);
         	pw.println(this.toJsonString());
-        	pw.close();
-            bw.close();
-            fw.close();
-	        
-		} catch (Exception e) {
+        	pw.close(); bw.close(); fw.close();   
+		} catch (CurrentWeatherException e) {
+        	System.out.println("Errore interpretazione dati");
+        } catch (Exception e) {
         	System.out.println("Errore scrittura file");
-        }
+        } 
 	}
 	
 	/**
@@ -103,12 +129,12 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	 * Ottengo i parametri essenziali del progetto in formato json
 	 * @return String con l'oggetto codificato in json 
 	 */
-	public String toJsonString() {
+	public String toJsonString() throws CurrentWeatherException {
 		HashMap<String, Object> keyvalue= new HashMap<>(); //costruisco un hashmap chiave/valore
-		keyvalue.put("id", this.getId());
+		if(this.getId()!=0) keyvalue.put("id", this.getId()); else throw new CurrentWeatherException();
 		keyvalue.put("dt", this.getDt()); //uso la data in unix timestamp per evitare conversioni inutili
-		keyvalue.put("temp", super.getMain().getTemp());
-		keyvalue.put("pressure", super.getMain().getPressure());
+		keyvalue.put("temp", this.getTemp());
+		keyvalue.put("pressure", this.getPressure());
 		JSONObject jsonobj = new JSONObject(keyvalue); //creo l'oggetto JSONObj a partire dall'hashmap
 		return jsonobj.toJSONString();
 	}
