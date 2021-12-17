@@ -1,6 +1,6 @@
 # PotrebbePiovere
 
-<img src="logo.png" alt="Logo" width="200" text-align="center"/>
+<img src="logo2.png" alt="Logo" width="200" text-align="center"/>
 
 
 **Repository ufficiale per condivisione sorgente del progetto assegnato per esame di programmazione ad oggetti**
