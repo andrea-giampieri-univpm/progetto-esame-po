@@ -5,12 +5,14 @@ import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import com.pp.exceptions.ConfigException;
 
 /**
  * Classe per gestire la configurazione dell'applicazione.
@@ -28,24 +30,23 @@ public class Config {
 	 * rende disponibili i vari parametri
 	 * se il file è assente/illegibile, termina l'applicazione (in quanto indispensabile)
 	 */
-	public static void initialize() {
+	public static void initialize() throws ConfigException {
 		JSONParser jparser = new JSONParser();
 		try {
 			conf = (JSONObject) jparser.parse(new BufferedReader (new FileReader ("config.json" ))); //parsing diretto del flusso	
-			//check dei parametri indispensabili ed output diagnostico
-			if(conf.containsKey("owm_apikey"))System.out.println("Using API KEY: "+conf.get("owm_apikey")); else throw new ParseException(0);
-			if(conf.containsKey("h_period")) System.out.println("Using period H: "+conf.get("h_period")); else throw new ParseException(0);
-			if(conf.containsKey("data_path")) System.out.println("Using data path: "+conf.get("data_path")); else throw new ParseException(0);
 		} catch (FileNotFoundException e) {
 			//dimostrazione gestione separata degli errori (in questo caso poco utile)
-			System.out.println("ERRORE: file di configurazione non trovato, app termina esecuzione.");
-			System.out.println(e);
-			System.exit(1);
-		} catch (Exception e){
-			System.out.println("ERRORE NON SPECIFICATO: verifica il log, app termina esecuzione.");
-			System.out.println(e);
-			System.exit(1);
+			throw new ConfigException("ERRORE: file di configurazione non trovato, app termina esecuzione.");
+		} catch (IOException e){
+			throw new ConfigException("ERRORE: lettura json interrotta.");
+		} catch (ParseException e){
+			throw new ConfigException("ERRORE: parsing json configurazione fallito.");
 		}
+		//check dei parametri indispensabili ed output diagnostico
+		if(conf.containsKey("owm_apikey"))System.out.println("Using API KEY: "+conf.get("owm_apikey")); else throw new ConfigException("apikey non trovata");
+		if(conf.containsKey("h_period")) System.out.println("Using period H: "+conf.get("h_period")); else throw new ConfigException("periodo sincronizzazione non trovato");
+		if(conf.containsKey("data_path")) System.out.println("Using data path: "+conf.get("data_path")); else throw new ConfigException("percorso salvataggio non trovato");
+	
 	}
 	
 	/**
@@ -63,11 +64,10 @@ public class Config {
 	 * @param param stringa del nome parametro
 	 * @param value oggetto contenente il valore associato al parametro
 	 */
+	@SuppressWarnings("unchecked")
 	public static void setConf(String param, Object value)  {
 		try {
-			HashMap<String,Object> keyvalue = new HashMap<>();
-			keyvalue.put(param, value);
-			conf.putAll(keyvalue);
+			conf.put(param, value);
 		} catch (UnsupportedOperationException e ) {
 			System.out.println(e);
 		}
@@ -83,7 +83,7 @@ public class Config {
 	 * @return
 	 */
 	public static void setConf(String param, Object value, boolean commit)  {
-		conf.put(param, value);
+		Config.setConf(param, value);
 		if (commit) Config.commit();
 	}
 	
@@ -104,6 +104,7 @@ public class Config {
 	 * da valutare inserimento in eventuale sottoclasse
 	 * @return arraylist di long contenente gli id delle città, null se errore o vuoto 
 	 */
+	@SuppressWarnings("unchecked")
 	public static ArrayList<Long> getCities(){
 		try {
 			ArrayList<Long> cities = (ArrayList<Long>) conf.get("cities");

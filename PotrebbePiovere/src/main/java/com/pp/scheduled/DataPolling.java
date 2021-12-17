@@ -7,7 +7,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
-import com.pp.interfaces.InterfacePolling;
 import com.pp.model.CurrentWeather;
 import com.pp.utils.Config;
 
@@ -17,7 +16,7 @@ import com.pp.utils.Config;
  *
  */
 @Component
-public class DataPolling implements InterfacePolling{
+public class DataPolling {
 	
 	
 	@Scheduled(fixedRate = 10000) //inserire da config
