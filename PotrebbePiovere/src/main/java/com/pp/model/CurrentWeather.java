@@ -71,6 +71,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 		this.setId(cw.getId());
 		this.setDt(cw.getDt());
 		this.setMain(cw.getMain());
+		this.setName(cw.getName());
 		} catch (RestClientException e) {
 			System.out.println("errore comunicazione di rete");
 			throw new CurrentWeatherException();
