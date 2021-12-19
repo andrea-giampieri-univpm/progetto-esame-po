@@ -1,8 +1,10 @@
 package com.pp.controller;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.pp.utils.Config;
 
@@ -17,9 +19,14 @@ import com.pp.utils.Config;
 @RestController
 public class ConfigController {
 	
-	@GetMapping("/addmonitoring")
+	@GetMapping(value="/addmonitoring",produces = "application/json;")
 	public String addCity(@RequestParam(value = "cityid") String cityId) {
-		return "da implementare";
+		try {
+			Config.addCity(Long.parseLong(cityId));
+			return  Config.toJsonString();
+		} catch (NumberFormatException e) {
+			throw new ResponseStatusException(400, "Numero non valido",e);
+		}
 	}
 	
 	@GetMapping("/addmonitoringday")
@@ -37,9 +44,14 @@ public class ConfigController {
 		return Config.toJsonString();
 	}
 	
-	@GetMapping("/removemonitoring")
+	@GetMapping(value="/removemonitoring",produces = "application/json;")
 	public String df(@RequestParam(value = "cityid") String cityId)  {
-		return "da implementare";
+		try {
+			Config.removeCity(Long.parseLong(cityId));
+			return  Config.toJsonString();
+		} catch (NumberFormatException e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "numero non valido", e);
+		}
 	}
 
 }
