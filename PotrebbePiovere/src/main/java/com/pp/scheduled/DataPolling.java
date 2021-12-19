@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 
 import com.pp.exceptions.CurrentWeatherException;
 import com.pp.model.CurrentWeather;
@@ -19,8 +18,7 @@ import com.pp.utils.Config;
 @Component
 public class DataPolling {
 	
-	
-	@Scheduled(fixedRate = 10000) //inserire da config
+	@Scheduled(fixedRate = 100000) //inserire da config
 	@Async
 	public void getCurrentWeather() {
 		ArrayList<Long> cities = Config.getCities(); //lista delle citta da interrogare

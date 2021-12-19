@@ -27,7 +27,7 @@ public class CurrentWeatherException extends Exception {
 	 * override del tostring per ritornare un json
 	 */
 	public String toString() {
-		return "{errordesc:"+this.getMessage()+"}";
+		return "{\"errordesc\":\""+this.getMessage()+"\"}";
 	}
 	
 }

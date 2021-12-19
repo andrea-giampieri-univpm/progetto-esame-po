@@ -73,7 +73,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 		this.setMain(cw.getMain());
 		this.setName(cw.getName());
 		} catch (RestClientException e) {
-			System.out.println("errore comunicazione di rete");
+			System.out.println("errore chiamata api " + e);
 			throw new CurrentWeatherException();
 		}
 	}

@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -28,14 +29,14 @@ public class Config {
 	/**
 	 * Legge il file config.json nella root del progetto 
 	 * rende disponibili i vari parametri
-	 * se il file è assente/illegibile, termina l'applicazione (in quanto indispensabile)
+	 * se il file è assente/illegibile
+	 * @throws ConfigException quando la configurazione è errata/assente/illegibile/senza parametri minimi
 	 */
 	public static void initialize() throws ConfigException {
 		JSONParser jparser = new JSONParser();
 		try {
 			conf = (JSONObject) jparser.parse(new BufferedReader (new FileReader ("config.json" ))); //parsing diretto del flusso	
 		} catch (FileNotFoundException e) {
-			//dimostrazione gestione separata degli errori (in questo caso poco utile)
 			throw new ConfigException("ERRORE: file di configurazione non trovato, app termina esecuzione.");
 		} catch (IOException e){
 			throw new ConfigException("ERRORE: lettura json interrotta.");
@@ -82,9 +83,9 @@ public class Config {
 	 * @param commit impostare su true per salvare il file
 	 * @return
 	 */
-	public static void setConf(String param, Object value, boolean commit)  {
+	public static void setConfCommit(String param, Object value)  {
 		Config.setConf(param, value);
-		if (commit) Config.commit();
+		Config.commit();
 	}
 	
 	/**
@@ -112,6 +113,33 @@ public class Config {
 		} catch (ClassCastException e) {
 			System.out.println("Errore formato dati da json");
 			return null;
+		}	
+	}
+	
+	/**
+	 * metodo diretto per impostare una nuova città
+	 * da valutare inserimento in eventuale sottoclasse
+	 */
+	@SuppressWarnings("unchecked")
+	public static void addCity(Long cityId){
+		try {
+			if (!((JSONArray) conf.get("cities")).contains(cityId))
+			//da aggiungere un controllo dell'id dalla lista
+				((JSONArray) conf.get("cities")).add(cityId);
+		} catch (ClassCastException e) {
+			System.out.println("Errore  dati");
+		}	
+	}
+	
+	/**
+	 * metodo diretto per rimuovere una nuova città
+	 * da valutare inserimento in eventuale sottoclasse
+	 */
+	public static void removeCity(Long cityId){
+		try {
+			((JSONArray) conf.get("cities")).remove(cityId);
+		} catch (ClassCastException e) {
+			System.out.println("Errore  dati");
 		}	
 	}
 	
