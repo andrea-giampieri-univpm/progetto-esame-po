@@ -1,10 +1,10 @@
 package com.pp;
 
-import static org.junit.Assert.assertThrows;
-import java.io.File;
-import org.junit.After;
-import org.junit.jupiter.api.BeforeAll;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 
 import com.pp.utils.Config;
@@ -16,32 +16,24 @@ import com.pp.utils.Config;
  */
 class ConfigTest {
 	
-	@BeforeAll
-	public static void secureConfig() {
-		File conf = new File("config.json");
-		File confbak = new File("config.json.bak");
-		conf.renameTo(confbak);
-	}
-		 
 	@Test
-	@DisplayName("Test lettura configurazione inesistente")
-	public void configReadUnavailable() {
-		assertThrows(NullPointerException.class, () -> {
-			File conf = new File("config.json");
-			conf.delete();
+	@Order(1)
+	@DisplayName("Test lettura parametro vuoto")
+	public void configReadparam() {
+		try {
 			Config.initialize();
-			});	
-	}
-
-	@After
-	public static void restoreConf() {
-		File conf = new File("config.json");
-		File confbak = new File("config.json.bak");
-		conf.delete();
-		conf = new File("config.json");
-		confbak.renameTo(conf);
-	}
+			assertEquals(null, Config.getConf("asdd"));
+		} catch (Exception e) {
+			
+		}
+	}	
 	
+	@Test
+	@Order(2)
+	@DisplayName("Test lettura configurazione")
+	public void configReadUnavailable() {
+		assertDoesNotThrow(() -> Config.initialize());
+	}
 
 
 }

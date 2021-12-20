@@ -13,7 +13,7 @@ public class CurrentWeatherException extends Exception {
 	 * eccezione personalizzata
 	 */
 	public CurrentWeatherException(){
-		super("id non numerico o sbagliato. By the orders of the fookin peaky blinders");
+		super("id non numerico o sbagliato. Terminated by the orders of the peaky blinders");
 	}
 	
 	/**

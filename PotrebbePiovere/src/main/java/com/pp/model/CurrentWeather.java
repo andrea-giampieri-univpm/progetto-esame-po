@@ -10,12 +10,14 @@ import java.util.TimeZone;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import com.pp.exceptions.CurrentWeatherException;
 import com.pp.interfaces.InterfaceCurrentWeather;
 import com.pp.model.owm.OwmCurrentJson;
+import com.pp.model.owm.OwmMain;
 import com.pp.utils.Config;
 
 /**
@@ -41,7 +43,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	 * sarebbe dovuto essere un metodo separato, creato per inserire override costruttore
 	 * @param jsonString stringa contenente l'oggetto in formato json (data in unix timestamp)
 	 */
-	public CurrentWeather(String jsonString) {
+	public CurrentWeather(String jsonString) throws CurrentWeatherException{
 		JSONParser jparser = new JSONParser();
 		try {
 			JSONObject json = (JSONObject) jparser.parse(jsonString);
@@ -50,13 +52,14 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 				this.setId((Long) id);
 			else
 				throw new CurrentWeatherException(String.valueOf(json));
-			this.getMain().setTemp((Double) json.get("temp"));
-			this.getMain().setPressure((Double) json.get("pressure"));
+			OwmMain main = new OwmMain();
+			main.setTemp((Double) json.get("temp"));
+			main.setPressure((Double) json.get("pressure"));
+			this.setMain(main);
 			this.setDt((Long)json.get("dt"));
-		} catch (CurrentWeatherException e) {
-			System.out.println("Errore valori oggetto");
-		} catch (Exception e) {
+		} catch (ParseException e) {
 			System.out.println("Errore parsing stringa json");
+			throw new CurrentWeatherException();
 		}
 	}
 	
@@ -117,9 +120,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
         	PrintWriter pw = new PrintWriter(bw);
         	pw.println(this.toJsonString());
         	pw.close(); bw.close(); fw.close();   
-		} catch (CurrentWeatherException e) {
-        	System.out.println("Errore interpretazione dati");
-        } catch (Exception e) {
+		} catch (Exception e) {
         	System.out.println("Errore scrittura file");
         } 
 	}
@@ -129,13 +130,13 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	 * Ottengo i parametri essenziali del progetto in formato json
 	 * @return String con l'oggetto codificato in json 
 	 */
-	public String toJsonString() throws CurrentWeatherException {
+	public String toJsonString() {
 		HashMap<String, Object> keyvalue= new HashMap<>(); //costruisco un hashmap chiave/valore
-		if(this.getId()!=0) keyvalue.put("id", this.getId()); else throw new CurrentWeatherException();
+		keyvalue.put("id", this.getId());
 		keyvalue.put("dt", this.getDt()); //uso la data in unix timestamp per evitare conversioni inutili
 		keyvalue.put("temp", this.getTemp());
 		keyvalue.put("pressure", this.getPressure());
-		JSONObject jsonobj = new JSONObject(keyvalue); //creo l'oggetto JSONObj a partire dall'hashmap
+		JSONObject jsonobj = new JSONObject(keyvalue); //creo l'oggetto JSONObj a partire dall'hashmap per evitare problemi di casting
 		return jsonobj.toJSONString();
 	}
 	
