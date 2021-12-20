@@ -45,7 +45,6 @@ public class Config {
 		}
 		//check dei parametri indispensabili ed output diagnostico
 		if(conf.containsKey("owm_apikey"))System.out.println("Using API KEY: "+conf.get("owm_apikey")); else throw new ConfigException("apikey non trovata");
-		if(conf.containsKey("h_period")) System.out.println("Using period H: "+conf.get("h_period")); else throw new ConfigException("periodo sincronizzazione non trovato");
 		if(conf.containsKey("data_path")) System.out.println("Using data path: "+conf.get("data_path")); else throw new ConfigException("percorso salvataggio non trovato");
 	
 	}
@@ -76,11 +75,9 @@ public class Config {
 	}
 	
 	/**
-	 * Metodo aggiuntivo a setconf che permette di scegliere se effettuare il salvataggio della configurazione su file
-	 * @overload setConf()
+	 * Metodo aggiuntivo a setconf che permette di salvare automaticamente su file la configurazione
 	 * @param param stringa del nome parametro
 	 * @param value oggetto contenente il valore associato al parametro
-	 * @param commit impostare su true per salvare il file
 	 * @return
 	 */
 	public static void setConfCommit(String param, Object value)  {
