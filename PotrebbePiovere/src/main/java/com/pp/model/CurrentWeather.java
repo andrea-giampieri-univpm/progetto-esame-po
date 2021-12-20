@@ -42,6 +42,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	 * da utilizzarsi per import/export da file
 	 * sarebbe dovuto essere un metodo separato, creato per inserire override costruttore
 	 * @param jsonString stringa contenente l'oggetto in formato json (data in unix timestamp)
+	 * @throws CurrentWeatherException in caso di stringa vuota o malformata o con dati mancanti
 	 */
 	public CurrentWeather(String jsonString) throws CurrentWeatherException{
 		JSONParser jparser = new JSONParser();
@@ -64,8 +65,8 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	}
 	
 	/**
-	 * costruisce l'oggetto dalle api. da aggiungere come parametro l'oggetto link
-	 * @param link link da chiamare per costruire l'oggetto
+	 * costruisce l'oggetto dalle api. da aggiungere come parametro l'oggetto link quando sarà
+	 * @param cityId id città da usare per costruire l'oggetto
 	 */
 	public CurrentWeather(Long cityId) throws CurrentWeatherException {
 		RestTemplate restTemplate = new RestTemplate(); //oggetto mapper di spring
@@ -143,7 +144,6 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	/**
 	 * Override del metodo toString per loggare i dati in console
 	 * non utile per json
-	 * @override toString della classe Object
 	 */
 	@Override
 	public String toString() {

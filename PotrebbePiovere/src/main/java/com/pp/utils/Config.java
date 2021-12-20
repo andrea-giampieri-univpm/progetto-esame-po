@@ -78,7 +78,6 @@ public class Config {
 	 * Metodo aggiuntivo a setconf che permette di salvare automaticamente su file la configurazione
 	 * @param param stringa del nome parametro
 	 * @param value oggetto contenente il valore associato al parametro
-	 * @return
 	 */
 	public static void setConfCommit(String param, Object value)  {
 		Config.setConf(param, value);
@@ -116,6 +115,7 @@ public class Config {
 	/**
 	 * metodo diretto per impostare una nuova città
 	 * da valutare inserimento in eventuale sottoclasse
+	 * @param cityId id città da lista currentweather
 	 */
 	@SuppressWarnings("unchecked")
 	public static void addCity(Long cityId){
@@ -131,6 +131,7 @@ public class Config {
 	/**
 	 * metodo diretto per rimuovere una nuova città
 	 * da valutare inserimento in eventuale sottoclasse
+	 * @param cityId id città da lista currentweather
 	 */
 	public static void removeCity(Long cityId){
 		try {

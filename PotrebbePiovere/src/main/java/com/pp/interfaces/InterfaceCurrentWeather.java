@@ -17,7 +17,7 @@ public interface InterfaceCurrentWeather {
 	/**
 	 * @return stringa json ottenuta con jsonsimple del modello semplificato specifico per l'applicazione
 	 */
-	public String toJsonString() throws CurrentWeatherException;
+	public String toJsonString();
 
 	/**
 	 * @return valore della pressione come double
