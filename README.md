@@ -153,6 +153,8 @@ Ritorna array json con i dati delle varie città richieste, errore in caso di pa
 
 ## Classi
 
+Le descrizioni delle classi sono contenute nella javadoc.
+
 ### Test cases
 
 Classe Config:
