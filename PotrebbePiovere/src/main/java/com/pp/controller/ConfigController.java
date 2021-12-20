@@ -25,18 +25,8 @@ public class ConfigController {
 			Config.addCity(Long.parseLong(cityId));
 			return  Config.toJsonString();
 		} catch (NumberFormatException e) {
-			throw new ResponseStatusException(400, "Numero non valido",e);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Numero non valido",e);
 		}
-	}
-	
-	@GetMapping("/addmonitoringday")
-	public String addCityDaily(@RequestParam(value = "cityid") String cityId, @RequestParam(value = "day") String day) {
-		return "da implementare";
-	}
-	
-	@GetMapping("/addmonitoringrange")
-	public String addCityRange(@RequestParam(value = "cityid") String cityId,@RequestParam(value = "from") String from,@RequestParam(value = "to") String to) {
-		return "da implementare";
 	}
 	
 	@GetMapping(value = "/status",produces = "application/json;")

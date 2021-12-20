@@ -36,7 +36,7 @@ public class CurrentWeatherController {
 	
 	@SuppressWarnings("unchecked")
 	@PostMapping(value="/getinstantarr",produces = "application/json;")
-	public String getInstant(@RequestBody String cities) {
+	public String getInstantPost(@RequestBody String cities) {
 		String jsonstring="";
 		JSONArray retArr = new JSONArray();
 		

@@ -18,7 +18,7 @@ import com.pp.utils.Config;
 @Component
 public class DataPolling {
 	
-	@Scheduled(fixedRate = 100000) //inserire da config
+	@Scheduled(fixedRate = 3600000) //inserire da config?
 	@Async
 	public void getCurrentWeather() {
 		ArrayList<Long> cities = Config.getCities(); //lista delle citta da interrogare

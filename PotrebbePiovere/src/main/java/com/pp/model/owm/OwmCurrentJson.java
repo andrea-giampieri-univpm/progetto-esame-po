@@ -12,15 +12,15 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true) //ignoro i campi del json non presenti nella classe
 public abstract class OwmCurrentJson {
-	OwmCoord coord;
-	ArrayList<OwmWeather> weather;
+	private OwmCoord coord;
+	private ArrayList<OwmWeather> weather;
 	private String base;
-	OwmMain main;
+	private OwmMain main;
 	private double visibility;
-	OwmWind wind;
-	OwmClouds clouds;
+	private OwmWind wind;
+	private OwmClouds clouds;
 	private long dt;
-	OwmSys sys;
+	private OwmSys sys;
 	private long id;
 	private String name;
 	private int cod;
