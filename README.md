@@ -39,22 +39,29 @@ Per non perdersi nei meandri del codice
         ├── src                     
         │   ├── main                
         │   │   ├── resources       # Risorse e configurazioni springboot
-        │   │   └── java            # Source files
-        │   └── test                # Classi di tests
-        └── ...
+        │   │   └── java            # Source files .java
+        │   └── test                # Classi di test
+        ├── doc                     # Documentazione javadoc
+        └── bin                     # Bytecode .class
 
 # Implementazione
 
 ## API reference
 
+Link Postman di esempio
+
+>https://www.postman.com/agiampi92/workspace/pub/collection/18506679-16e47ed5-af48-4623-a4fa-32c4f0b8867d
+
+
 ### Index
 
-| Tipo | Controller | Descrizione | Parametri | Return |
-| :---: | :---: | :--: | :---: | :---: |
+| Tipo | Controller | Descrizione |
+| :---: | :---: | :--: |
 | GET | [/status](https://github.com/andrea-giampieri-univpm/progetto-esame-po#Status) | Restituisce la running-config come json |
 | GET | [/addmonitoring?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#AddMonitoring) | Aggiunge una città passata come parametro al monitoraggio |
 | GET | [/removemonitoring?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#RemoveMonitoring) | Rimuove una città dal monitoraggio  |
 | GET | [/getinstant?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstant) | Restituisce in json il meteo corrente di una città data come id  |
+| POST | [/getinstantarr](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstantArr) | Restituisce in json il meteo corrente di più id città passate come array json nel body della richiesta  |
 | GET | [/getstats?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStats) | Restituisce in json le statistiche di una città data come id utilizzando tutti i campioni disponibili |
 | GET | [/getstatsfiltered?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFiltered) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno del periodo indicato|
 | POST | [/getstatsfiltered/](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFilteredArr) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno dei periodi indicati in un array passato come json|
@@ -62,12 +69,81 @@ Per non perdersi nei meandri del codice
 ###  Controller specs
 
 #### Status
+Ritorna il json contenente la configurazione: 
+
+    {
+        "cities": [
+            3183089,
+            6540108,
+            6542152
+        ],
+        "h_period": 2,
+        "owm_apikey": "123123123123123123123",
+        "data_path": "C:\\Users\\utente\\Desktop\\"
+    }
 
 #### AddMonitoring
 
+Ritorna il json della nuova configurazione, errore 400 in json in caso di parametro non presente:
+
+    {
+        "timestamp": "2021-12-20T20:34:22.675+00:00",
+        "status": 400,
+        "error": "Bad Request",
+        "path": "/addmonitoring"
+    }
+
 #### RemoveMonitoring
+Ritorna il json della nuova configurazione, errore 400 in json in caso di parametro non presente.
 
 #### GetInstant
+
+Ritorna il json contenente i dati meteo della città richiesta:
+
+    {
+        "dt": 1640032281,
+        "temp": 10.04,
+        "id": 3183089,
+        "pressure": 1015.0
+    }
+    
+Errore generico 400 in json (come sopra), errore personalizzato in caso di problemi con la chiamata remota ad openweathermap:
+{
+    "errordesc": "id non numerico o sbagliato"
+}
+
+#### GetInstantArr
+
+La richiesta deve contenere un array json nel body:
+
+    [
+            3183089,
+            6540108,
+            6542152
+        ]
+
+Ritorna array json con i dati delle varie città richieste, errore in caso di parametri errati (vedi sopra):
+
+    [
+        {
+            "dt": 1640032281,
+            "temp": 10.04,
+            "id": 3183089,
+            "pressure": 1015.0
+        },
+        {
+            "dt": 1640032281,
+            "temp": 9.24,
+            "id": 6540108,
+            "pressure": 1021.0
+        },
+        {
+            "dt": 1640032281,
+            "temp": 8.25,
+            "id": 6542152,
+            "pressure": 1023.0
+        }
+    ]
 
 #### GetStats
 
@@ -77,26 +153,31 @@ Per non perdersi nei meandri del codice
 
 ## Classi
 
-ConfigController: Mapping delle rotte per la gestione della configurazione 
-CurrentWeatherController: Mapping delle rotte per il meteo attuale 
-StatsController: Mapping delle rotte per le statistiche 
-DataPolling: Implementazione tramite Scheduler Spring del salvataggio dati temporizzato
-Config: Gestisce il modello della configurazione
-CurrentWeather: Sottoclasse di OwmCurrentJson che specializza la classe per questa applicazione
-OwmCurrentJson: Da json OWM, rappresenta l'oggetto di risposta ricevuto tramite le api "current" di OWM
-OwmMain: Da json OWM, per il modello dati principale
-OwmSys: Da json OWM, per il modello dati sistema
-OwmWeather: Da json OWM, per il modello dati clima
-OwmWind: Da json OWM, per il modello dati vento
-OwmCoord: Da json OWM, per il modello dati coordinate
-OwmClouds: Da json OWM, per il modello dati nuvolosità 
-
-### Interfaces
-
 ### Test cases
 
-### Exception handling
+Classe Config:
+
+- Case1: "Test lettura parametro vuoto" : Testo la risposta se cerco di legger un parametro inesistente, suppongo ritorni null.
+- Case2:" Test lettura configurazione" : Verifico l'inizializzazione della configurazione, suppongo non lanci errori.
+
+Classe CurrentWeather:
+
+- Case1: "Test stringa regolare" : Test creazione oggetto regolare, supposto nessun errore lanciato.
+- Case2: "Test lettura stringa vuota" : Test creazione oggetto da stringa vuota, supposto errore.
+- Case3: "Test lettura id errato" : Test creazione oggetto da api owm con id errato, supporto errore.
+- Case4: "Test lettura id corretto" : Test creazione oggetto da api owm con id corretto, supposto nessun errore lanciato.
+- Case5: "Test tojsonstring" : Verifica output tojsonstring con stringa di esempio, supposto uguale.
 
 # Interfaccia grafica
 
 # Istruzioni 
+
+1- Clonare repository
+
+2- Configurare file config.json
+
+3- (facoltativo) eseguire "./mvnw test" dalla directory per eseguire i test
+
+4- Eseguire con ./mvnw spring-boot:run
+
+
