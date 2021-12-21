@@ -25,8 +25,8 @@ Finizii Francesco - Giampieri Andrea
 
 L'implementazione realizzata consente di: 
 - visualizzare temperatura e pressione correnti di una specifica città
-- salvare ogni n ore i dati offerti dall'API Current di OpenWeatherMap su file
-- richiedere delle statistiche sui dati salvati eventualmente filtrati per data e ora
+- salvare ogni ora i dati delle città scelte su file (offerti dall'API Current di OpenWeatherMap)
+- richiedere delle statistiche sui dati salvati eventualmente filtrarne il calcolo
 - gestire la configurazione dell'applicazione
 
 Il progetto viene realizzato in Java 17 su framework Spring con Maven gestore dei pacchetti.
@@ -50,7 +50,7 @@ Per non perdersi nei meandri del codice
 
 Link Postman di esempio
 
->https://www.postman.com/agiampi92/workspace/pub/collection/18506679-16e47ed5-af48-4623-a4fa-32c4f0b8867d
+    https://www.postman.com/agiampi92/workspace/pub/collection/18506679-16e47ed5-af48-4623-a4fa-32c4f0b8867d
 
 
 ### Index
@@ -84,7 +84,7 @@ Ritorna il json contenente la configurazione:
 
 #### AddMonitoring
 
-Ritorna il json della nuova configurazione, errore 400 in json in caso di parametro non presente:
+Richiede il parametro cityid con l'id della città da aggiungere. Ritorna il json della nuova configurazione, errore 400 (in json) in caso di parametro non presente:
 
     {
         "timestamp": "2021-12-20T20:34:22.675+00:00",
@@ -94,7 +94,8 @@ Ritorna il json della nuova configurazione, errore 400 in json in caso di parame
     }
 
 #### RemoveMonitoring
-Ritorna il json della nuova configurazione, errore 400 in json in caso di parametro non presente.
+Richiede il parametro cityid con l'id della città da rimuovere. Ritorna il json della nuova configurazione, errore 400 (in json) in caso di parametro non presente (come sopra).
+Se l'id scelto non esiste, nulla viene effettuato.
 
 #### GetInstant
 
@@ -108,9 +109,9 @@ Ritorna il json contenente i dati meteo della città richiesta:
     }
     
 Errore generico 400 in json (come sopra), errore personalizzato in caso di problemi con la chiamata remota ad openweathermap:
-{
-    "errordesc": "id non numerico o sbagliato"
-}
+    {
+        "errordesc": "id non numerico o sbagliato"
+    }
 
 #### GetInstantArr
 
@@ -122,7 +123,7 @@ La richiesta deve contenere un array json nel body:
             6542152
         ]
 
-Ritorna array json con i dati delle varie città richieste, errore in caso di parametri errati (vedi sopra):
+Ritorna array json con i dati delle varie città richieste, errore in caso di parametri errati (come per GetInstant):
 
     [
         {
@@ -147,13 +148,35 @@ Ritorna array json con i dati delle varie città richieste, errore in caso di pa
 
 #### GetStats
 
+to be implemented
+
 #### GetStatsFiltered
+
+to be implemented
 
 #### GetStatsFilteredArr
 
+to be implemented
+
 ## Classi
 
-Le descrizioni delle classi sono contenute nella javadoc.
+OwmCurrentJson (e relative classi interne): Modello dati del json restituito dalle api di OWM.
+
+CurrentWeather: Sottoclasse di OwmCurrentJson che gestisce il modello dati del clima per il progetto.
+
+Config: Classe per la gestione del file di configurazione.
+
+DataPolling: Gestore delle attività pianificate (chiamate api OWM).
+
+ConfigController: Gestore delle rotte per modifiche alla configurazione.
+
+CurrentWeatherController: Gestore delle rotte per richiesta dati.
+
+ConfigException: Eccezioni per la classe Config.
+
+CurrentWeatherException: Eccezioni per la classe CurrentWeahter.
+
+Le specifiche delle classi sono contenute nella javadoc.
 
 ### Test cases
 
@@ -176,10 +199,10 @@ Classe CurrentWeather:
 
 1- Clonare repository
 
-2- Configurare file config.json
+2- Configurare file config.json (inserire apikey e data path di salvataggio)
 
 3- (facoltativo) eseguire "./mvnw test" dalla directory per eseguire i test
 
 4- Eseguire con ./mvnw spring-boot:run
 
-
+NOTA: Richiede jdk-17 installato per compilare
