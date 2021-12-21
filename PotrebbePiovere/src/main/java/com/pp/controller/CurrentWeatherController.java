@@ -3,11 +3,13 @@ package com.pp.controller;
 import org.json.simple.JSONArray;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.pp.exceptions.CurrentWeatherException;
 import com.pp.model.CurrentWeather;
@@ -27,7 +29,7 @@ public class CurrentWeatherController {
 			CurrentWeather cw = new CurrentWeather(cityId);
 			jsonstring = cw.toJsonString();
 		} catch (CurrentWeatherException e) {
-			jsonstring=e.toString();
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(),e);
 		} finally {
 			System.out.println("ricevuta chiamata api getinstant (demo del blocco finally)");
 		}
@@ -37,7 +39,6 @@ public class CurrentWeatherController {
 	@SuppressWarnings("unchecked")
 	@PostMapping(value="/getinstantarr",produces = "application/json;")
 	public String getInstantPost(@RequestBody String cities) {
-		String jsonstring="";
 		JSONArray retArr = new JSONArray();
 		
 		try {
@@ -47,17 +48,14 @@ public class CurrentWeatherController {
 				CurrentWeather cw = new CurrentWeather(Long.parseLong(city.toString()));
 				retArr.add(new JSONParser().parse(cw.toJsonString()));
 			}
-			jsonstring=retArr.toString();
-			jsonstring=retArr.toJSONString();
+			return retArr.toJSONString();
 		} catch (CurrentWeatherException e) {
-			jsonstring=e.toString();
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(),e);
 		}  catch (ParseException e) {
-			jsonstring=e.toString();
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(),e);
 		} finally {
-			System.out.println("ricevuta chiamata api getinstant (demo del blocco finally)");
+			System.out.println("ricevuta chiamata api getinstantarr (demo del blocco finally)");
 		}
-		
-		return jsonstring;
 	}
 	
 }
