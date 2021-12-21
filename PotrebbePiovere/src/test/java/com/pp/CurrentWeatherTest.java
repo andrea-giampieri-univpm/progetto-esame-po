@@ -37,6 +37,7 @@ class CurrentWeatherTest {
 		assertDoesNotThrow(() ->  new CurrentWeather(jsonString));
 	}
 
+	@SuppressWarnings("unused")
 	@Test
 	@Order(2)
 	@DisplayName("Test lettura stringa vuota")
@@ -52,6 +53,7 @@ class CurrentWeatherTest {
 	@DisplayName("Test lettura id errato")
 	public void constructor3() {
 		assertThrows(CurrentWeatherException.class, () -> {
+			@SuppressWarnings("unused")
 			CurrentWeather cw = new CurrentWeather((long)123);
 	  });
 	}

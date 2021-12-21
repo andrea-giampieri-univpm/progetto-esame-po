@@ -16,6 +16,7 @@ import org.springframework.web.client.RestTemplate;
 
 import com.pp.exceptions.CurrentWeatherException;
 import com.pp.interfaces.InterfaceCurrentWeather;
+import com.pp.interfaces.InterfaceJsonString;
 import com.pp.model.owm.OwmCurrentJson;
 import com.pp.model.owm.OwmMain;
 import com.pp.utils.Config;
@@ -26,7 +27,7 @@ import com.pp.utils.Config;
  * @author Andrea Giampieri
  *
  */
-public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWeather {
+public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWeather,InterfaceJsonString {
 
 	/**
 	 * Costruttore vuoto

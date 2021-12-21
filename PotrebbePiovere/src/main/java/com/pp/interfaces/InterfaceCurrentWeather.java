@@ -1,6 +1,5 @@
 package com.pp.interfaces;
 
-import com.pp.exceptions.CurrentWeatherException;
 
 /**
  * Interfacce per l'implementazione della classe
