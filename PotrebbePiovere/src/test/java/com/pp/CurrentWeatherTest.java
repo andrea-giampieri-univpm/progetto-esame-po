@@ -63,7 +63,6 @@ class CurrentWeatherTest {
 	@DisplayName("Test lettura id corretto")
 	public void constructor4() {
 		assertDoesNotThrow(() ->   new CurrentWeather((long)6542152));
-	 
 	}
 	
 	@Test

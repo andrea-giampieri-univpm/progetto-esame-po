@@ -34,14 +34,13 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	 */
 	public CurrentWeather() {
 	}
-	
+
 	/**
 	 * Costruttore a partire da stringa json.
 	 * questo non è equivalente al requestmapper in quanto mappa 
 	 * solo i dati rilevanti per l'applicazione
 	 * ovvero  id, temperatura, pressione, data
 	 * da utilizzarsi per import/export da file
-	 * sarebbe dovuto essere un metodo separato, creato per inserire override costruttore
 	 * @param jsonString stringa contenente l'oggetto in formato json (data in unix timestamp)
 	 * @throws CurrentWeatherException in caso di stringa vuota o malformata o con dati mancanti
 	 */
@@ -50,21 +49,20 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 		try {
 			JSONObject json = (JSONObject) jparser.parse(jsonString);
 			Object id=json.get("id");
-			if ((id instanceof Long) && (Long)id!=0) 
+			if ((id instanceof Long) && (Long)id!=0)  //se l'id non è numerico o è 0 vado in errore
 				this.setId((Long) id);
 			else
-				throw new CurrentWeatherException(String.valueOf(json));
-			OwmMain main = new OwmMain();
+				throw new CurrentWeatherException("id non valido o non numerico"); //all'eccezione passo il json per diagnostica
+			OwmMain main = new OwmMain(); //utilizzo l'oggetto main perchè così è strutturato l'oggetto OwmCurrentJson
 			main.setTemp((Double) json.get("temp"));
 			main.setPressure((Double) json.get("pressure"));
 			this.setMain(main);
 			this.setDt((Long)json.get("dt"));
 		} catch (ParseException e) {
-			System.out.println("Errore parsing stringa json");
-			throw new CurrentWeatherException();
+			throw new CurrentWeatherException("Stringa Json non interpretabile");
 		}
 	}
-	
+
 	/**
 	 * costruisce l'oggetto dalle api. da aggiungere come parametro l'oggetto link quando sarà
 	 * @param cityId id città da usare per costruire l'oggetto
@@ -72,17 +70,17 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	public CurrentWeather(Long cityId) throws CurrentWeatherException {
 		RestTemplate restTemplate = new RestTemplate(); //oggetto mapper di spring
 		try {
-		CurrentWeather cw = restTemplate.getForObject("https://api.openweathermap.org/data/2.5/weather?id="+cityId+"&appid="+Config.getConf("owm_apikey")+"&units=metric&lang=it", CurrentWeather.class);
-		this.setId(cw.getId());
-		this.setDt(cw.getDt());
-		this.setMain(cw.getMain());
-		this.setName(cw.getName());
+			//costruisco l'oggetto a partire dall'oggetto ritornato da resttemplate con i soli dati indispensabili
+			CurrentWeather cw = restTemplate.getForObject("https://api.openweathermap.org/data/2.5/weather?id="+cityId+"&appid="+Config.getConf("owm_apikey")+"&units=metric&lang=it", CurrentWeather.class);
+			this.setId(cw.getId());
+			this.setDt(cw.getDt());
+			this.setMain(cw.getMain());
+			this.setName(cw.getName());
 		} catch (RestClientException e) {
-			System.out.println("errore chiamata api " + e);
-			throw new CurrentWeatherException();
+			throw new CurrentWeatherException("errore chiamata api");
 		}
 	}
-	
+
 	/**
 	 * Ritorna la data del meteo in formato LocalDateTime
 	 * il dato è lo stesso di getDt() ma come oggetto
@@ -91,7 +89,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	public LocalDateTime getFormattedDt() {
 		return LocalDateTime.ofInstant(Instant.ofEpochSecond(super.getDt()), TimeZone.getTimeZone("Europe/Rome").toZoneId());
 	}
-	
+
 	/**
 	 * Non è un override perchè il getTemp non è della superclasse ma di una classe separata
 	 * @return valore della pressione come double
@@ -99,7 +97,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	public double getPressure() {
 		return super.getMain().getPressure();
 	}
-	
+
 	/**
 	 * Non è un override perchè il getTemp non è della superclasse ma di una classe separata
 	 * @return valore della pressione come double
@@ -107,7 +105,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	public double getTemp() {
 		return super.getMain().getTemp();
 	}
-	
+
 	/**
 	 * Consente il salvataggio dell'oggetto come stringa json all'interno di un file
 	 * se il file è già esistente, viene aggiunto l'oggetto come riga
@@ -118,15 +116,15 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 		try {
 			//salvo il file
 			FileWriter fw = new FileWriter(Config.getConf("data_path")+"data_"+this.getId()+".json",true);
-        	BufferedWriter bw = new BufferedWriter(fw);
-        	PrintWriter pw = new PrintWriter(bw);
-        	pw.println(this.toJsonString());
-        	pw.close(); bw.close(); fw.close();   
+			BufferedWriter bw = new BufferedWriter(fw);
+			PrintWriter pw = new PrintWriter(bw);
+			pw.println(this.toJsonString());
+			pw.close(); bw.close(); fw.close();   
 		} catch (Exception e) {
-        	System.out.println("Errore scrittura file");
-        } 
+			System.out.println("Errore scrittura file");
+		} 
 	}
-	
+
 	/**
 	 * implementazione dell'interfaccia
 	 * Ottengo i parametri essenziali del progetto in formato json
@@ -141,7 +139,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 		JSONObject jsonobj = new JSONObject(keyvalue); //creo l'oggetto JSONObj a partire dall'hashmap per evitare problemi di casting
 		return jsonobj.toJSONString();
 	}
-	
+
 	/**
 	 * Override del metodo toString per loggare i dati in console
 	 * non utile per json
@@ -150,5 +148,5 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	public String toString() {
 		return "City ("+super.getName()+"):"+super.getId()+" Temp: "+this.getTemp()+" Press: "+this.getPressure()+ " Time: "+this.getFormattedDt();
 	}
-	
+
 }

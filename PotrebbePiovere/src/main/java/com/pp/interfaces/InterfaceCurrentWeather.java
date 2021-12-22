@@ -12,11 +12,6 @@ public interface InterfaceCurrentWeather {
 	 * aggiunge una riga di json contenente il meteo ad un file di testo
 	 */
 	public void appendToFile();
-		
-	/**
-	 * @return stringa json ottenuta con jsonsimple del modello semplificato specifico per l'applicazione
-	 */
-	public String toJsonString();
 
 	/**
 	 * @return valore della pressione come double

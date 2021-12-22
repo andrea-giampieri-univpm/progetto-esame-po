@@ -13,14 +13,14 @@ public class CurrentWeatherException extends Exception {
 	 * eccezione personalizzata
 	 */
 	public CurrentWeatherException(){
-		super("id non numerico o sbagliato. Terminated by the orders of the peaky blinders");
+		super("Errore creazione oggetto CurrentWeather");
 	}
 	
 	/**
 	 * eccezione personalizzata con parametro, passa il parametro in output.
 	 */
 	public CurrentWeatherException(String string){
-		super("id non numerico o sbagliato:\n"+string);
+		super("Errore creazione oggetto CurrentWeather:\n"+string);
 	}
 	
 	/**
