@@ -28,7 +28,7 @@ public class CurrentWeatherController {
 			CurrentWeather cw = new CurrentWeather(cityId); //creo nuvovo oggetto 
 			return cw.toJsonString();
 		} catch (CurrentWeatherException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(),e);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
 		} finally {
 			System.out.println("ricevuta chiamata api getinstant");
 		}
@@ -46,9 +46,9 @@ public class CurrentWeatherController {
 			}
 			return retArr.toJSONString();
 		} catch (CurrentWeatherException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(),e);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
 		}  catch (ParseException e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString(),e);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.toString());
 		} finally {
 			System.out.println("ricevuta chiamata api getinstantarr");
 		}

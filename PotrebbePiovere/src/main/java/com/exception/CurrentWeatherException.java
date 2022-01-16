@@ -20,14 +20,8 @@ public class CurrentWeatherException extends Exception {
 	 * eccezione personalizzata con parametro, passa il parametro in output.
 	 */
 	public CurrentWeatherException(String string){
-		super("Errore creazione oggetto CurrentWeather:\n"+string);
+		super("Errore creazione oggetto CurrentWeather: "+string);
 	}
 	
-	/**
-	 * override del tostring per ritornare un json
-	 */
-	public String toString() {
-		return "{\"errordesc\":\""+this.getMessage()+"\"}";
-	}
 	
 }
