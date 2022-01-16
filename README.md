@@ -1,7 +1,5 @@
 # Today_S_Forecast
 
-<img src="logo2.png" alt="Logo" width="200" text-align="center"/>
-
 
 **Repository ufficiale per condivisione sorgente del progetto assegnato per esame di programmazione ad oggetti**
  
@@ -64,7 +62,6 @@ Link Postman di esempio
 | POST | [/getinstantarr](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstantArr) | Restituisce in json il meteo corrente di più id città passate come array json nel body della richiesta  |
 | GET | [/getstats?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStats) | Restituisce in json le statistiche di una città data come id utilizzando tutti i campioni disponibili |
 | GET | [/getstatsfiltered?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFiltered) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno del periodo indicato|
-| POST | [/getstatsfiltered/](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFilteredArr) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno dei periodi indicati in un array passato come json|
 
 ###  Controller specs
 
@@ -84,17 +81,18 @@ Ritorna il json contenente la configurazione:
 
 #### AddMonitoring
 
-Richiede il parametro cityid con l'id della città da aggiungere. Ritorna il json della nuova configurazione, errore 400 (in json) in caso di parametro non presente:
+Richiede il parametro cityid con l'id della città da aggiungere. Ritorna il json della nuova configurazione o errore 400 (in json) in caso di parametro non presente:
 
     {
         "timestamp": "2021-12-20T20:34:22.675+00:00",
         "status": 400,
         "error": "Bad Request",
+        "message": "descrizione dell'errore"
         "path": "/addmonitoring"
     }
 
 #### RemoveMonitoring
-Richiede il parametro cityid con l'id della città da rimuovere. Ritorna il json della nuova configurazione, errore 400 (in json) in caso di parametro non presente (come sopra).
+Richiede il parametro cityid con l'id della città da rimuovere. Ritorna il json della nuova configurazione o errore 400 (in json) in caso di parametro non presente (come sopra).
 Se l'id scelto non esiste, nulla viene effettuato.
 
 #### GetInstant
@@ -108,10 +106,7 @@ Ritorna il json contenente i dati meteo della città richiesta:
         "pressure": 1015.0
     }
     
-Errore generico 400 in json (come sopra), errore personalizzato in caso di problemi con la chiamata remota ad openweathermap:
-    {
-        "errordesc": "id non numerico o sbagliato"
-    }
+Errore 400 in json (come sopra) con messaggio personalizzato in caso di errore.
 
 #### GetInstantArr
 
@@ -148,17 +143,31 @@ Ritorna array json con i dati delle varie città richieste, errore in caso di pa
 
 #### GetStats
 
-to be implemented
+Ritorna le statistiche complete di una città utilizzando tutti i campioni disponibili.
+Tra i dati include il numero di campioni usati, la data del campione più recente e del campione più vecchio.
 
+     {
+             "id": 123456,
+             "press_avg": 1011.33,
+             "press_min": 980.1,
+             "press_max": 1050.2,
+             "samples": 220,
+             "press_variance": 73.40032281,
+             "dt_from":1640032281,
+             "dt_to":1640032281
+         }
+
+Errore 400 in json (come sopra) in caso di errore.
+        
 #### GetStatsFiltered
 
-to be implemented
+Ritorna le statistiche complete di una città utilizzando i campioni presenti nel range specificato. Il json è identico a GetStats
 
-#### GetStatsFilteredArr
+Errore 400 in json (come sopra) in caso di errore.
 
-to be implemented
 
-## Classi
+
+## Classi (AG)
 
 OwmCurrentJson (e relative classi interne): Modello dati del json restituito dalle api di OWM.
 
@@ -175,6 +184,14 @@ CurrentWeatherController: Gestore delle rotte per richiesta dati.
 ConfigException: Eccezioni per la classe Config.
 
 CurrentWeatherException: Eccezioni per la classe CurrentWeahter.
+
+Stats: superclasse per calcolo statistiche (aggiuntiva).
+
+WeatherStats: sottoclasse di Stats per implementazione statistiche su oggetti CurrentWeather (aggiuntiva).
+
+FilteredWeatherStats: sottoclasse di WeatherStats per statistiche filtrate (aggiuntiva).
+
+AGCity: Contenitore per i dati statistici e storici della città (aggiuntiva).
 
 Le specifiche delle classi sono contenute nella javadoc.
 
