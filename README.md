@@ -39,8 +39,7 @@ Per non perdersi nei meandri del codice
         │   │   ├── resources       # Risorse e configurazioni springboot
         │   │   └── java            # Source files .java
         │   └── test                # Classi di test
-        ├── doc                     # Documentazione javadoc
-        └── bin                     # Bytecode .class
+        └── doc                     # Documentazione javadoc
 
 # Implementazione
 
@@ -167,7 +166,7 @@ Errore 400 in json (come sopra) in caso di errore.
 
 
 
-## Classi (AG)
+## Classi
 
 OwmCurrentJson (e relative classi interne): Modello dati del json restituito dalle api di OWM.
 
