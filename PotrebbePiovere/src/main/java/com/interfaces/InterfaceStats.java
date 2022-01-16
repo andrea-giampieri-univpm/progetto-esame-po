@@ -3,6 +3,7 @@ package com.interfaces;
 /**
  * Interfacce per l'implementazione della statistiche
  * come da progetto
+ * @author Andrea Giampieri
  *
  */
 public interface InterfaceStats {
@@ -21,13 +22,13 @@ public interface InterfaceStats {
 	
 	/**
 	 * 
-	 * @retur media
+	 * @return media
 	 */
 	public double getAverage();
 	
 	/**
 	 * 
-	 * @retur varianza
+	 * @return varianza
 	 */
 	public double getVariance();
 	

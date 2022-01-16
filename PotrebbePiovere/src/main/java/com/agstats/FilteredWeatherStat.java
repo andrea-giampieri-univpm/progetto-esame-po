@@ -4,6 +4,11 @@ import java.util.ArrayList;
 
 import com.model.CurrentWeather;
 
+/**
+ * Classe per le statistiche filtrate
+ * @author Andrea Giampieri
+ * 
+ */
 public class FilteredWeatherStat extends WeatherStats {
 		
 	/**

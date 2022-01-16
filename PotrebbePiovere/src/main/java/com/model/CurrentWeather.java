@@ -65,7 +65,7 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	}
 
 	/**
-	 * costruisce l'oggetto dalle api. da aggiungere come parametro l'oggetto link quando sarà
+	 * costruisce l'oggetto dalle api. I dati inseriti sono solo quelli essenziali.
 	 * @param cityId id città da usare per costruire l'oggetto
 	 */
 	public CurrentWeather(Long cityId) throws CurrentWeatherException {
@@ -90,7 +90,6 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 			this.setMain(main);
 			this.setDt((Long)json.get("dt"));
 			this.setId((Long) json.get("id"));
-			System.out.println(get);
 			
 		} catch (Exception e) {
 			throw new CurrentWeatherException("errore chiamata api");

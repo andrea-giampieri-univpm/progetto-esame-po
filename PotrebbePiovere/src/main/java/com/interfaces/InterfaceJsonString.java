@@ -1,5 +1,10 @@
 package com.interfaces;
 
+/**
+ * Interfaccia per output in json
+ * @author Andrea Giampieri
+ * 
+ */
 public interface InterfaceJsonString {
 
 	/**

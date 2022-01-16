@@ -4,7 +4,8 @@ package com.interfaces;
 /**
  * Interfacce per l'implementazione della classe
  * CurrentWeather specifica per il progetto
- *
+ * 
+ * @author Andrea Giampieri
  */
 public interface InterfaceCurrentWeather {
 	
