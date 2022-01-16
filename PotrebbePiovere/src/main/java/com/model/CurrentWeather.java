@@ -11,8 +11,9 @@ import java.util.TimeZone;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
+//import org.springframework.web.client.RestClientException;
+//import org.springframework.web.client.RestTemplate;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.exception.CurrentWeatherException;
 import com.interfaces.InterfaceCurrentWeather;
@@ -68,15 +69,30 @@ public class CurrentWeather extends OwmCurrentJson implements InterfaceCurrentWe
 	 * @param cityId id città da usare per costruire l'oggetto
 	 */
 	public CurrentWeather(Long cityId) throws CurrentWeatherException {
-		RestTemplate restTemplate = new RestTemplate(); //oggetto mapper di spring
+		WebClient wc = WebClient.create("http://api.openweathermap.org/data/2.5/weather"); //webclient di spring
 		try {
-			//costruisco l'oggetto a partire dall'oggetto ritornato da resttemplate con i soli dati indispensabili
-			CurrentWeather cw = restTemplate.getForObject("https://api.openweathermap.org/data/2.5/weather?id="+cityId+"&appid="+Config.getConf("owm_apikey")+"&units=metric&lang=it", CurrentWeather.class);
-			this.setId(cw.getId());
-			this.setDt(cw.getDt());
-			this.setMain(cw.getMain());
-			this.setName(cw.getName());
-		} catch (RestClientException e) {
+			//costruisco l'oggetto a partire dall'oggetto ritornato da webclient
+			String get = wc
+					.get()
+					.uri(uriBuilder -> uriBuilder
+							.queryParam("id", cityId)
+							.queryParam("units", "metric")
+							.queryParam("appid", Config.getConf("owm_apikey"))
+							.build())
+					.retrieve()
+					.bodyToMono(String.class)
+					.block();
+			JSONParser jparser = new JSONParser();
+			JSONObject json = (JSONObject) jparser.parse(get);
+			OwmMain main = new OwmMain(); //utilizzo l'oggetto main perchè così è strutturato l'oggetto OwmCurrentJson
+			main.setTemp((Double) ((JSONObject)json.get("main")).get("temp"));
+			main.setPressure((Double) ((JSONObject)json.get("main")).get("temp"));
+			this.setMain(main);
+			this.setDt((Long)json.get("dt"));
+			this.setId((Long) json.get("id"));
+			System.out.println(get);
+			
+		} catch (Exception e) {
 			throw new CurrentWeatherException("errore chiamata api");
 		}
 	}
