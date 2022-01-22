@@ -33,7 +33,7 @@ public class DataPolling {
 	@Autowired
 	DatabaseManagment database;
 	
-	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 3600000 )
 	@Async
 	public void DataStorage() {
 		for (CityData elem:database.getAllData()) {
