@@ -60,7 +60,7 @@ Link Postman di esempio
 | GET | [/getinstant?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstant) | Restituisce in json il meteo corrente di una città data come id  |
 | POST | [/getinstantarr](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstantArr) | Restituisce in json il meteo corrente di più id città passate come array json nel body della richiesta  |
 | GET | [/getstats?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStats) | Restituisce in json le statistiche di una città data come id utilizzando tutti i campioni disponibili |
-| GET | [/getstatsfiltered?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFiltered) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno del periodo indicato|
+| GET | [/getstatsfiltered?cityid={}&from={}&to={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFiltered) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno del periodo indicato (come unix timestamp)|
 
 ###  Controller specs
 
