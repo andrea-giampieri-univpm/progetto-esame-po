@@ -1,151 +1,163 @@
 package com.utils;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
+import com.data.DatabaseManagment;
 import com.exception.ConfigException;
+import com.service.WeatherService;
 
 /**
  * Classe per gestire la configurazione dell'applicazione.
- * La classe richiede di lanciare il metodo initialize() per leggere il file e rendere disponibile la configurazione
- * Volutamente non implementato un modello dati specifico ma utilizza esclusivamente l'oggetto JSONObject
- * @author Andrea Giampieri
- *
+ * 
  */
-public class Config {
 
-	private static JSONObject conf; //configurazione gestita come keyvalue in un json obj
+@Configuration
+public class Config implements JsonConversion{
+	
+	@Autowired
+	WeatherService service;
+	
+	@Autowired
+	DatabaseManagment database;
+	
+
+	private JSONObject conf; //configurazione gestita come keyvalue in un json obj
 
 	/**
-	 * Legge il file config.json nella root del progetto 
-	 * rende disponibili i vari parametri
-	 * se il file è assente/illegibile
-	 * @throws ConfigException quando la configurazione è errata/assente/illegibile/senza parametri minimi
+	 * Legge il file config.json nella root del progetto e termina nel caso in cui
+	 * non trova l'API_KEY 
+	 * @throws ConfigException
 	 */
-	public static void initialize() throws ConfigException {
-		JSONParser jparser = new JSONParser();
+	@Bean
+	public void initialize() throws ConfigException  {
 		try {
-			conf = (JSONObject) jparser.parse(new BufferedReader (new FileReader ("config.json" ))); //parsing diretto del flusso	
-		} catch (FileNotFoundException e) {
-			throw new ConfigException("ERRORE: file di configurazione non trovato, app termina esecuzione.");
-		} catch (IOException e){
-			throw new ConfigException("ERRORE: lettura json interrotta.");
-		} catch (ParseException e){
-			throw new ConfigException("ERRORE: parsing json configurazione fallito.");
+			conf = JsonStringToJsonObject(FileToString("config.json"));
+			//check dei parametri indispensabili ed output diagnostico
+			if (!getElem("apiKey").equals("")) {
+				setApiKey(getElem("apiKey").toString());
+				if (!getElem("cities").equals("")) 
+					startCitiesD​ataCapture(conf.getJSONArray("cities"));
+				//Creazione oggetto CityList
+				new CityList(JsonStringToJsonArray(FileToString("city.list.json")));		
+			}
+			else {
+				System.out.println("ApiKey not found");
+				System.exit(1);
+			}
+		}catch (JSONException e){
+			throw new ConfigException("json object creation failed.");
 		}
-		//check dei parametri indispensabili ed output diagnostico
-		if(conf.containsKey("owm_apikey"))System.out.println("Using API KEY: "+conf.get("owm_apikey")); else throw new ConfigException("apikey non trovata");
-		if(conf.containsKey("data_path")) System.out.println("Using data path: "+conf.get("data_path")); else throw new ConfigException("percorso salvataggio non trovato");
+	}
 	
+	
+	/**
+	 * metodo che implementa l'interfaccia JsonConversion
+	 * @throws ConfigException 
+	 * @return String
+	 * @see JsonConversion
+	 */
+    public String FileToString(String fileName) throws ConfigException {
+    	String line;  
+        StringBuilder stringbuilder = new StringBuilder();
+    	try { 
+    		BufferedReader br = new BufferedReader(new FileReader(fileName));
+    		while((line = br.readLine()) !=null) {
+    			stringbuilder.append(line);
+    		}
+    	}catch(FileNotFoundException e) {
+    		System.out.println("file di configurazione " + fileName + " not found" );
+    		System.exit(1);
+    	} catch(IOException e) {
+    		throw new ConfigException(" I/O error ");
+    	}
+        return stringbuilder.toString();
+    }
+ 
+
+	/**
+	 * metodo che implementa l'interfaccia JsonConversion
+	 * @throws ConfigException 
+	 * @return JSONObject
+	 * @see JsonConversion
+	 */
+	public JSONObject JsonStringToJsonObject(String jsonString) throws ConfigException {
+		try {
+			return new JSONObject(jsonString);
+		} catch (JSONException e) {
+			throw new ConfigException("ERRORE: Creazione oggetto json non riuscita");
+		}
 	}
 	
 	/**
 	 * Metodo per ottenere un parametro di configurazione specifico
 	 * L'oggetto di ritorno deve essere controllato, può essere stringa, long, double, ecc...
 	 * @param param Stringa del nome parametro da ottenere
-	 * @return il valore del parametro associato come Object o null se non esistente
+	 * @return il valore del parametro associato come Object o una stringa vuota se non esistente
 	 */
-	public static Object getConf(String param) {
-		if(conf.containsKey(param)) return conf.get(param); else return null;
+	public Object getElem(String param) {
+		if(conf.has(param) && !conf.isEmpty() && !conf.isNull(param)) 
+			return conf.get(param); 
+		else 
+			return "";
 	}
 	
+	
 	/**
-	 * Metodo per impostare un parametro nuovo o sovrascrivere un parametro esistente
-	 * @param param stringa del nome parametro
-	 * @param value oggetto contenente il valore associato al parametro
+	 * Metodo che passa l'API_KEY alla classe che ha il compito di effettuare 
+	 * la chiamata alla API OpenWeatherMap
+	 * @see WeatherService
+	 */	
+	private void setApiKey(String key) {
+		service.setApiKey(conf.getString("apiKey"));		
+	}
+
+	
+	/**
+	 * metodo che inizializza le città su cui effettuare statistiche meteo
+	 * @throws ConfigException 
 	 */
-	@SuppressWarnings("unchecked")
-	public static void setConf(String param, Object value)  {
+	private void startCitiesD​ataCapture(JSONArray json) throws ConfigException {
 		try {
-			conf.put(param, value);
-		} catch (UnsupportedOperationException e ) {
-			System.out.println(e);
+			for (int i=0; i<json.length(); i++) {
+				database.addCity(json.getInt(i));
+			}
+		} catch(JSONException e) {
+			throw new ConfigException("Cities value are not valid in the configuration file.");
 		}
 		
 	}
-	
+
+
+
+
 	/**
-	 * Metodo aggiuntivo a setconf che permette di salvare automaticamente su file la configurazione
-	 * @param param stringa del nome parametro
-	 * @param value oggetto contenente il valore associato al parametro
+	 * metodo per creare l'oggetto CityList che tarmite costruttore converte il JSONArray  
+	 * in due liste, una per tutti i nomi e una per tutti gli ID di città
+	 * @throws ConfigException 
+	 * @see CityList
 	 */
-	public static void setConfCommit(String param, Object value)  {
-		Config.setConf(param, value);
-		Config.commit();
-	}
-	
-	/**
-	 * metodo per salvare la configurazione in json su file. sovrascrive la vecchia config
-	 */
-	public static void commit() {//ma perchè il try ha le parentesi
-        try (BufferedWriter br = new BufferedWriter(new FileWriter("config.json" ))) {
-            br.write(conf.toJSONString());
-            br.close();
-        } catch (Exception e) {
-        	System.out.println("Errore scrittura file configurazione");
-        }
-	}
-	
-	/**
-	 * metodo diretto per ottenere un array con la lista delle città di cui salvare i dati
-	 * da valutare inserimento in eventuale sottoclasse
-	 * @return arraylist di long contenente gli id delle città, null se errore o vuoto 
-	 */
-	@SuppressWarnings("unchecked")
-	public static ArrayList<Long> getCities(){
-		try {
-			ArrayList<Long> cities = (ArrayList<Long>) conf.get("cities");
-			return cities;
-		} catch (ClassCastException e) {
-			System.out.println("Errore formato dati da json");
-			return null;
-		}	
-	}
-	
-	/**
-	 * metodo diretto per impostare una nuova città
-	 * da valutare inserimento in eventuale sottoclasse
-	 * @param cityId id città da lista currentweather
-	 */
-	@SuppressWarnings("unchecked")
-	public static void addCity(Long cityId){
-		try {
-			if (!((JSONArray) conf.get("cities")).contains(cityId))
-			//da aggiungere un controllo dell'id dalla lista
-				((JSONArray) conf.get("cities")).add(cityId);
-		} catch (ClassCastException e) {
-			System.out.println("Errore  dati");
-		}	
-	}
-	
-	/**
-	 * metodo diretto per rimuovere una nuova città
-	 * da valutare inserimento in eventuale sottoclasse
-	 * @param cityId id città da lista currentweather
-	 */
-	public static void removeCity(Long cityId){
-		try {
-			((JSONArray) conf.get("cities")).remove(cityId);
-		} catch (ClassCastException e) {
-			System.out.println("Errore  dati");
-		}	
-	}
-	
-	/**
-	 * Converte l'oggetto configurazione in una stringa json
-	 * @return String con la configurazione completa
-	 */
-	public static String toJsonString() {
-		return conf.toString();
-	}
+    public JSONArray JsonStringToJsonArray(String jsonString) throws ConfigException {
+    	try {
+    		return new JSONArray(jsonString);
+    	} catch(JSONException e) {
+    		throw new ConfigException("Creazione oggetto json non riuscita");
+    	}
+    }
+    
+    
+
+    
+    
+
+    
+    
 }

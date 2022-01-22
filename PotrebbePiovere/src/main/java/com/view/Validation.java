@@ -1,15 +1,23 @@
 package com.view;
 
+/**
+ * Classe che rappresenta i possibili dati forniti in input tramite pagina Web dall'utente 
+ * 
+ */
+
 public class Validation {
 	
 	int idInput; 
 	int idInputModal;
-	String nameInputModal;
+	String nameInputModal ="";
 	String idCheckbox = "";
 	String nameCheckbox = "";
-	String lang;
-	String units;	
+	String lang="";
+	String units="";	
+
 	
+	
+	//Setter methods
 	
 	public void setIdInput(int idInput) {
 		this.idInput = idInput;
@@ -32,7 +40,9 @@ public class Validation {
 	public void setUnits(String units) {
 		this.units = units;
 	}
+
 	
+	//Getter methods
 	
 	public int getIdInput() {
 		return idInput;
@@ -55,8 +65,5 @@ public class Validation {
 	public String getUnits() {
 		return units;
 	}
-
-	
-	
 
 }

@@ -1,9 +1,26 @@
 package com.model;
 
+import org.springframework.stereotype.Component;
+
+/**
+ *Modello base di una città
+ */
+@Component
 public class City {
 	
-	int id;
+	int id;	
 	String name, country;
+	
+	
+	public City() {
+		
+	}
+	
+	public City(int id, String name, String country) {
+		this.id = id;
+		this.name = name;
+		this.country = country;		
+	}
 	
 	//Setter methods
 
@@ -16,7 +33,7 @@ public class City {
 		this.name = name;
 	}
 	
-		public void setCountry(String country) {
+	public void setCountry(String country) {
 		this.country = country;
 	}
 		
@@ -32,7 +49,7 @@ public class City {
 		return id;
 	}
 	
-		public String getCountry() {
+	public String getCountry() {
 		return country;
 	}
 

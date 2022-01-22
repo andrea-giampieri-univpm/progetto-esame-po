@@ -15,7 +15,7 @@
 </head>
 
 <body>
-  <form action="/statistics" method="POST" modelAttribute="statistics">
+  <form action="/statistics" method="POST">
     <div class="modal fade" role="dialog" tabindex="-1" id="statistics">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -25,15 +25,15 @@
                 <div class="modal-body">
                     <p class="text-start" style="min-height: 48px;font-size: 19px;font-weight: bold;height: 50px;">Select data and time:</p>
                         <div style="height: 60px;">
-                          <label class="form-label d-flex float-start" for="datafrom" style="margin-top: 6px;">From:</label>
-                          <input class="form-control d-flex float-start" type="datetime-local" min="${fromDateMin}" max="${fromDateMax}" style="padding: 6px 12px;min-width: 130px;max-width: 225px;margin-left: 30px;margin-right: 10px;">
+                          <label class="form-label d-flex float-start" style="margin-top: 6px;">From:</label>
+                          <input class="form-control d-flex float-start" type="datetime-local" min="${firstDate}" max="${lastDate}" style="padding: 6px 12px;min-width: 130px;max-width: 225px;margin-left: 30px;margin-right: 10px;">
                         </div>
                         <div style="height: 60px;margin-top: 40px;">
-                          <label class="form-label d-flex float-start" style="margin-top: 6px;">To:&nbsp; &nbsp; &nbsp;&nbsp;</label>
-                          <input class="form-control d-flex float-start" type="datetime-local"  min="${toDateMin}" max="${toDateMax}" style="height: 38px;padding: 6px 12px;min-width: 130px;max-width: 225px;margin-left: 30px;margin-right: 10px;">
+                          <label class="form-label d-flex float-start" style="margin-top: 6px;">To:</label>
+                          <input class="form-control d-flex float-start" type="datetime-local"  min="${firstDate}" max="${lastDate}" style="height: 38px;padding: 6px 12px;min-width: 130px;max-width: 225px;margin-left: 30px;margin-right: 10px;">
                         </div>
                 </div>
-                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal" style="background: rgb(255,255,255);">Close</button><button class="btn btn-primary" type="submit">Submit</button></div>
+                <div class="modal-footer"><button class="btn btn-light" type="button" data-bs-dismiss="modal" style="background: rgb(255,255,255);">Close</button><button class="btn btn-primary" type="${buttonType}">Submit</button></div>
             </div>
         </div>
     </div>
@@ -43,7 +43,7 @@
             <div class="container-fluid"><a class="navbar-brand" href="#"><img src="asset/img/logo.png"></a><button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1"><span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span></button>
                 <div class="collapse navbar-collapse" id="navcol-1" style="width: 1000px;">
                     <ul class="navbar-nav ms-auto">
-                        <li class="nav-item" style="margin-top: 20px;"><a class="nav-link d-flex float-end" href="" style="font-size: 20px;font-family: Alata, sans-serif;font-weight: bold;color: rgb(0,0,0);height: 50px;">Home</a></li>
+                        <li class="nav-item" style="margin-top: 20px;"><a class="nav-link d-flex float-end" href="/home" style="font-size: 20px;font-family: Alata, sans-serif;font-weight: bold;color: rgb(0,0,0);height: 50px;">Home</a></li>
                     </ul>
                 </div>
             </div>
@@ -55,12 +55,12 @@
                         <div class="col">
                             <div class="row">
                                 <div class="col" style="background: var(--bs-blue);border-color: var(--bs-blue);">
-                                    <h1>${cityName}</h1>
+                                    <h1>${name}</h1>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col" style="margin-top: 10px;">
-                                    <h2 style="text-align: left;">${cityId}</h2>
+                                    <h2 style="text-align: left;">${id}</h2>
                                 </div>
                                 <div class="col" style="margin-top: 10px;">
                                     <h2>${country}</h2>
@@ -72,7 +72,7 @@
                         <div class="col">
                             <div class="row">
                                 <div class="col" style="margin-top: 50px;"><img class="d-inline-flex float-none" src="${weatherIcon}" style="width: 100px;">
-                                    <h1 class="d-inline-flex float-end" style="width: 150px;margin-top: 18px;">${temp}&deg${units}</h1>
+                                    <h2 class="d-inline-flex float-end" style="width: 150px;margin-top: 18px;">${temp}&deg${simbol}</h2>
                                 </div>
                             </div>
                             <div class="row">
@@ -106,7 +106,7 @@
                     </div>
                     <div class="row">
                         <div class="col" style="margin-top: 10px;">
-                            <h2 class="text-start">Range:&nbsp; &nbsp;date and time</h2>
+                            <h2 class="text-start">Range available:${firstDateRange} - ${lastDateRange}</h2>
                         </div>
                     </div>
                     <div class="row">
@@ -116,11 +116,11 @@
                     </div>
                     <div class="row">
                         <div class="col" style="margin-left: 20px;">
-                            <p style="font-size: 20px;margin-top: 10px;color: rgb(214,24,24);">${error}sta</p>
-                            <p style="margin-top: 5px;">MIN:    ${pressMin}  hPa</p>
-                            <p>MAX:    ${pressMax}  hPa</p>
-                            <p>AVERAGE:    ${presAverage}  hPa</p>
-                            <p>VARIANCE:    ${pressVariance}  hPa</p>
+                            <p style="font-size: 20px;margin-top: 10px;color: rgb(214,24,24);">${error}</p>
+                            <p style="margin-top: 5px;">MIN:    ${min}  hPa</p>
+                            <p>MAX:    ${max}  hPa</p>
+                            <p>AVERAGE:    ${average}  hPa</p>
+                            <p>VARIANCE:    ${variance}  hPa</p>
                             <div style="height: 35px;"></div>
                         </div>
                     </div>
@@ -134,7 +134,7 @@
             <div class="row">
                 <div class="col-md-6 d-flex float-end">
                     <ul class="list-inline" style="width: 100%;">
-                        <li class="list-inline-item"><a href="">Home</a></li>
+                        <li class="list-inline-item"><a href="/home">Home</a></li>
                     </ul>
                 </div>
                 <div class="col-md-6 d-flex float-start">

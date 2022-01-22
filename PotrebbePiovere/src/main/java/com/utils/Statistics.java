@@ -1,20 +1,24 @@
 package com.utils;
 
-import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Classe che effettua statistiche a partire da una List Integer
+ */
 
 public class Statistics {
 	
 	int min, max;
 	double average, variance;
 
-	public Statistics(ArrayList<Integer> pressure) { 
+	public Statistics(List<Integer> list) { 
 		
 		average = 0;
 		variance = 0;
-		min = pressure.get(0);
-		max = pressure.get(0);
+		min = list.get(0);
+		max = list.get(0);
 		
-		for(int elem:pressure) {
+		for(int elem:list) {
 			
 			if (elem < min) {
 				min = elem;
@@ -27,13 +31,13 @@ public class Statistics {
 			average += elem;
 		}
 		
-		average /= pressure.size();
+		average /= list.size();
 		
-		for(int elem:pressure) {
+		for(int elem:list) {
 			variance += Math.pow((elem - average), 2);
 		}
 		
-		variance /= pressure.size();
+		variance /= list.size();
 		
 	}
 	
