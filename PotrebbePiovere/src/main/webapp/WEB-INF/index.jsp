@@ -135,7 +135,7 @@
                 <div class="col-lg-6 text-white order-lg-2 showcase-img" style="background: url(&quot;assets/img/code.jpg&quot;);background-size: cover;"><span></span></div>
                 <div class="col-lg-6 my-auto order-lg-1 showcase-text">
                     <h2>Website</h2>
-                    <p class="lead mb-0">Founded in 2022, Today's Forecast is committed to providing you with the best weather services ever <b>Today's Forecast</b> is your source for high quality weather service</p>
+                    <p class="lead mb-0">Founded in 2022, Today's Forecast is committed to providing you with the best weather services ever. <b>Today's Forecast</b> is your source for high quality weather service</p>
                     <h2 style="margin-top: 50px;">Team</h2>
                     <p class="lead mb-0">The project was created by two engineering students at UNIVPM. Click on the github icon for more details about the project</p>
                 </div>
