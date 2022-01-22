@@ -22,9 +22,11 @@ Finizii Francesco - Giampieri Andrea
 ## Overview
 
 L'implementazione realizzata consente di: 
-- visualizzare temperatura e pressione correnti di una specifica città
-- salvare ogni ora i dati delle città scelte su file (offerti dall'API Current di OpenWeatherMap)
-- richiedere delle statistiche sui dati salvati eventualmente filtrarne il calcolo
+- visualizzare il meteo e ottenere statistiche tramite pagina web
+- visualizzare meteo corrente di una città tramite id o nome
+- salvare ogni ora i dati di determinate città su database(offerti dall'API Current di OpenWeatherMap)
+- scegliere su quali città effettuare statistiche e impostarne delle predefinite(aggiungendo nel file config.json)
+- effettuare operazioni sul database, come ad esempio aggiungere città o rimuoverle
 - gestire la configurazione dell'applicazione
 
 Il progetto viene realizzato in Java 17 su framework Spring con Maven gestore dei pacchetti.
@@ -33,189 +35,88 @@ Il progetto viene realizzato in Java 17 su framework Spring con Maven gestore de
 Per non perdersi nei meandri del codice
 
     .
-    └── PotrebbePiovere             # Home progetto con configurazione Maven
+    └── Today's Forecast             # Home progetto con configurazione Maven
         ├── src                     
         │   ├── main                
-        │   │   ├── resources       # Risorse e configurazioni springboot
-        │   │   └── java            # Source files .java
+        │   │   ├── resources       # Risorse pagina web e configurazioni springboot
+        │   │   ├── java            # Source files .java 
+            │   └── webapp          
+                    └──WEB-INF      # directory contente le pagine web
         │   └── test                # Classi di test
         └── doc                     # Documentazione javadoc
-
 # Implementazione
-
-## API reference
-
-Link Postman di esempio
-
-    https://www.postman.com/agiampi92/workspace/pub/collection/18506679-16e47ed5-af48-4623-a4fa-32c4f0b8867d
 
 
 ### Index
 
 | Tipo | Controller | Descrizione |
 | :---: | :---: | :--: |
-| GET | [/status](https://github.com/andrea-giampieri-univpm/progetto-esame-po#Status) | Restituisce la running-config come json |
-| GET | [/addmonitoring?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#AddMonitoring) | Aggiunge una città passata come parametro al monitoraggio |
-| GET | [/removemonitoring?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#RemoveMonitoring) | Rimuove una città dal monitoraggio  |
-| GET | [/getinstant?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstant) | Restituisce in json il meteo corrente di una città data come id  |
-| POST | [/getinstantarr](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetInstantArr) | Restituisce in json il meteo corrente di più id città passate come array json nel body della richiesta  |
-| GET | [/getstats?cityid={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStats) | Restituisce in json le statistiche di una città data come id utilizzando tutti i campioni disponibili |
-| GET | [/getstatsfiltered?cityid={}&from={}&to={}](https://github.com/andrea-giampieri-univpm/progetto-esame-po#GetStatsFiltered) | Restituisce in json le statistiche di una città data come id utilizzando i campioni disponibili all'interno del periodo indicato (come unix timestamp)|
-
-###  Controller specs
-
-#### Status
-Ritorna il json contenente la configurazione: 
-
-    {
-        "cities": [
-            3183089,
-            6540108,
-            6542152
-        ],
-        "h_period": 2,
-        "owm_apikey": "123123123123123123123",
-        "data_path": "C:\\Users\\utente\\Desktop\\"
-    }
-
-#### AddMonitoring
-
-Richiede il parametro cityid con l'id della città da aggiungere. Ritorna il json della nuova configurazione o errore 400 (in json) in caso di parametro non presente:
-
-    {
-        "timestamp": "2021-12-20T20:34:22.675+00:00",
-        "status": 400,
-        "error": "Bad Request",
-        "message": "descrizione dell'errore"
-        "path": "/addmonitoring"
-    }
-
-#### RemoveMonitoring
-Richiede il parametro cityid con l'id della città da rimuovere. Ritorna il json della nuova configurazione o errore 400 (in json) in caso di parametro non presente (come sopra).
-Se l'id scelto non esiste, nulla viene effettuato.
-
-#### GetInstant
-
-Ritorna il json contenente i dati meteo della città richiesta:
-
-    {
-        "dt": 1640032281,
-        "temp": 10.04,
-        "id": 3183089,
-        "pressure": 1015.0
-    }
-    
-Errore 400 in json (come sopra) con messaggio personalizzato in caso di errore.
-
-#### GetInstantArr
-
-La richiesta deve contenere un array json nel body:
-
-    [
-            3183089,
-            6540108,
-            6542152
-        ]
-
-Ritorna array json con i dati delle varie città richieste, errore in caso di parametri errati (come per GetInstant):
-
-    [
-        {
-            "dt": 1640032281,
-            "temp": 10.04,
-            "id": 3183089,
-            "pressure": 1015.0
-        },
-        {
-            "dt": 1640032281,
-            "temp": 9.24,
-            "id": 6540108,
-            "pressure": 1021.0
-        },
-        {
-            "dt": 1640032281,
-            "temp": 8.25,
-            "id": 6542152,
-            "pressure": 1023.0
-        }
-    ]
-
-#### GetStats
-
-Ritorna le statistiche complete di una città utilizzando tutti i campioni disponibili.
-Tra i dati include il numero di campioni usati, la data del campione più recente e del campione più vecchio.
-
-     {
-             "id": 123456,
-             "press_avg": 1011.33,
-             "press_min": 980.1,
-             "press_max": 1050.2,
-             "samples": 220,
-             "press_variance": 73.40032281,
-             "dt_from":1640032281,
-             "dt_to":1640032281
-         }
-
-Errore 400 in json (come sopra) in caso di errore.
-        
-#### GetStatsFiltered
-
-Ritorna le statistiche complete di una città utilizzando i campioni presenti nel range specificato. Il json è identico a GetStats
-
-Errore 400 in json (come sopra) in caso di errore.
+| Get | [/home] | Restituisce il meteo corrente tramite id in formato JSON |
+| GET | [/data/currentWeatherById?id={}] | Restituisce il meteo corrente tramite id in formato JSON |
+| GET | [/data/currentWeatherByName?name={}] | Restituisce il meteo corrente tramite nome in formato JSON |
+| GET | [/data/all] | Restituisce tutti i dati presenti nel database in formato JSON|
+| GET | [/data/allCities] | Restituisce tutte le città presenti nel database in formato JSON  |
+| GET | [/data/weatherDataByCityId?id={}]| Restituisce in formato json tutti  dati meteo di una determinata città specificandone l'ID  |
+| GET | [/data/weatherDataByCityName?name={}] | Restituisce in formato json tutti  dati meteo di una determinata città specificandone il nome  |
+| GET | [/data/add] | Aggiunge una città nel database|
+| DELETE | [/data/delete] | Rimuove una città dal database|
+| DELETE | [/data/deleteAll] | Rimuove tutti i dati dal database|
 
 
 
 ## Classi
 
-OwmCurrentJson (e relative classi interne): Modello dati del json restituito dalle api di OWM.
+TodaySForecastApplication: Controller di tipo REST che ci permettere di svolgere le operazioni di gestione del database e di visualizzare il meteo corrente.
 
-CurrentWeather: Sottoclasse di OwmCurrentJson che gestisce il modello dati del clima per il progetto.
+City : Classe che rappresenta il modello base di una città.
 
+Weather : Classe che rappresenta il meteo di una città.
+
+DataController: Controller di tipo REST che ci permettere di svolgere le operazioni di gestione del database e di visualizzare il meteo corrente.
+
+WebController: Garantisce tramite navigazione web di visualizzare il meteo corrente ed eventualmente di visualizzarne le statistiche meteo nel caso in cui siano presenti i dati nel database relativi alla città in questione.
+
+CityData : Classe che rappresenta una tabella relativa alle città salvate nel database.
+
+WeatherData : Classe che rappresenta una tabella relativa ai dati meteo salvati nel database.
+ 
 Config: Classe per la gestione del file di configurazione.
 
 DataPolling: Gestore delle attività pianificate (chiamate api OWM).
 
-ConfigController: Gestore delle rotte per modifiche alla configurazione.
-
-CurrentWeatherController: Gestore delle rotte per richiesta dati.
-
+DatabaseManagment: Classe che si occupa di gestire le principali operazioni del database.
+ 
 ConfigException: Eccezioni per la classe Config.
 
-CurrentWeatherException: Eccezioni per la classe CurrentWeahter.
+WeatherException: Eccezioni generate in caso di errore durante la creazone di un oggetto Weather.
 
-Stats: superclasse per calcolo statistiche (aggiuntiva).
+CityList: classe per il controllo della validità delle città fornite in input.
 
 WeatherStats: sottoclasse di Stats per implementazione statistiche su oggetti CurrentWeather (aggiuntiva).
 
-FilteredWeatherStats: sottoclasse di WeatherStats per statistiche filtrate (aggiuntiva).
-
-AGCity: Contenitore per i dati statistici e storici della città (aggiuntiva).
+Statistics: classe che effettua statistiche a partire da una List Integer
 
 Le specifiche delle classi sono contenute nella javadoc.
 
 ### Test cases
 
-Classe Config:
+Classe ConfigTest:
 
-- Case1: "Test lettura parametro vuoto" : Testo la risposta se cerco di legger un parametro inesistente, suppongo ritorni null.
-- Case2:" Test lettura configurazione" : Verifico l'inizializzazione della configurazione, suppongo non lanci errori.
+- Case1: "Test lettura parametri errati" : Testo la risposta se cerco di legger un parametro inesistente, suppongo ritorni una stringa vuota.
+- Case2:"Test conversione stringa in JSONObject" : Verifico l'effetiva conversione di una stringa in un JSONObject, suppongo non lanci errori.
 
-Classe CurrentWeather:
+Classe WeatherTest:
 
-- Case1: "Test stringa regolare" : Test creazione oggetto regolare, supposto nessun errore lanciato.
-- Case2: "Test lettura stringa vuota" : Test creazione oggetto da stringa vuota, supposto errore.
-- Case3: "Test lettura id errato" : Test creazione oggetto da api owm con id errato, supporto errore.
-- Case4: "Test lettura id corretto" : Test creazione oggetto da api owm con id corretto, supposto nessun errore lanciato.
-- Case5: "Test tojsonstring" : Verifica output tojsonstring con stringa di esempio, supposto uguale.
+- Case1: "Test creazione oggeto meteo regolare" : Test creazione oggetto regolare, supposto nessun errore lanciato.
+- Case2: "Test lettura id errato" : Test creazione oggetto da api owm con id errato, supporto errore.
+- Case3: "Test lettura id corretto" : Test creazione oggetto da api owm con id corretto, supposto nessun errore lanciato.
 
-# Interfaccia grafica
 
 # Istruzioni 
 
 1- Clonare repository
 
-2- Configurare file config.json (inserire apikey e data path di salvataggio)
+2- Configurare file config.json (inserire apikey ed eventualmente le città su cui effettuare statistiche)
 
 3- (facoltativo) eseguire "./mvnw test" dalla directory per eseguire i test
 
